@@ -84,7 +84,7 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CGimmick::Render()
 {
-	int ani = -1;
+	int ani = 0;
 	if (state == GIMMICK_STATE_WALKING_RIGHT)
 	{
 		ani = GIMMICK_ANI_WALKING_RIGHT;

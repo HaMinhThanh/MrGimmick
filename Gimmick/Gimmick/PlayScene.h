@@ -1,24 +1,26 @@
 #pragma once
-
 #include "Game.h"
 #include "Textures.h"
 #include "Scene.h"
 #include "GameObject.h"
-#include <map>
+#include "Brick.h"
 #include "Gimmick.h"
-#include "Portal.h"
 
-class CPlayScene: public CScene
+
+
+class CPlayScene : public CScene
 {
-public:
-	std::map<int, bool> keys;
-	CGimmick* player;
+protected:
+	CGimmick* player;					// A play scene has to have player, right? 
 
-	void ParseSection_Textures(string line);
-	void ParseSection_Sprites(string line);
-	void ParseSection_Animations(string line);
-	void ParseSection_Animation_Sets(string line);
-	void ParseSection_Objects(string line);
+	vector<LPGAMEOBJECT> objects;
+
+	void _ParseSection_TEXTURES(string line);
+	void _ParseSection_SPRITES(string line);
+	void _ParseSection_ANIMATIONS(string line);
+	void _ParseSection_ANIMATION_SETS(string line);
+	void _ParseSection_OBJECTS(string line);
+
 
 public:
 	CPlayScene(int id, LPCWSTR filePath);
@@ -27,7 +29,10 @@ public:
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
+
 	CGimmick* GetPlayer() { return player; }
+
+	//friend class CPlayScenceKeyHandler;
 };
 
 class CPlayScenceKeyHandler : public CScenceKeyHandler
@@ -35,7 +40,6 @@ class CPlayScenceKeyHandler : public CScenceKeyHandler
 public:
 	virtual void KeyState(BYTE* states);
 	virtual void OnKeyDown(int KeyCode);
-	virtual void OnKeyUp(int KeyCode);
+	virtual void OnKeyUp(int KeyCode) {};
 	CPlayScenceKeyHandler(CScene* s) :CScenceKeyHandler(s) {};
 };
-
