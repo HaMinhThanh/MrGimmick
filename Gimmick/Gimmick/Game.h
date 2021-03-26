@@ -5,88 +5,72 @@
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+
+
+#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 
-#include "Define.h"
 #include "Scene.h"
-
-#define DIRECTINOUT_VERSION 0X0800
-#define KEYBOARD_BUFFER_SIZE 1024
 
 using namespace std;
 
+#define KEYBOARD_BUFFER_SIZE 1024
+
 class CGame
 {
-	static CGame* _instance;
-	HWND hWnd;
+	static CGame* __instance;
+	HWND hWnd;									// Window handle
 
-	LPDIRECT3D9 d3d = NULL;
-	LPDIRECT3DDEVICE9 d3ddv = NULL;
+	LPDIRECT3D9 d3d = NULL;						// Direct3D handle
+	LPDIRECT3DDEVICE9 d3ddv = NULL;				// Direct3D device object
 
 	LPDIRECT3DSURFACE9 backBuffer = NULL;
-	LPD3DXSPRITE spriteHandler = NULL;
+	LPD3DXSPRITE spriteHandler = NULL;			// Sprite helper library to help us draw 2D image on the screen 
 
-	LPDIRECTINPUT8 di;
-	LPDIRECTINPUTDEVICE8 didv;
+	LPDIRECTINPUT8       di;		// The DirectInput object         
+	LPDIRECTINPUTDEVICE8 didv;		// The keyboard device 
 
-	BYTE keyStates[256];
-	DIDEVICEOBJECTDATA keyEvents[KEYBOARD_BUFFER_SIZE];
+	BYTE  keyStates[256];			// DirectInput keyboard state buffer 
+	DIDEVICEOBJECTDATA keyEvents[KEYBOARD_BUFFER_SIZE];		// Buffered keyboard data
 
 	LPKEYEVENTHANDLER keyHandler;
 
 	float cam_x = 0.0f;
 	float cam_y = 0.0f;
 
-	int ScreenWidth;
-	int ScreenHeight;
+	int screen_width;
+	int screen_height;
 
 	unordered_map<int, LPSCENE> scenes;
-	int currentScene;
+	int current_scene;
 
-	void ParseSection_Setting(string line);
-	void ParseSection_Scenes(string line);
+	void _ParseSection_SETTINGS(string line);
+	void _ParseSection_SCENES(string line);
 
 public:
-	D3DCOLOR background;
-
-	void InitKeyBoard();
+	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; }
 	void Init(HWND hWnd);
-
 	void Draw(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha = 255);
-	void DrawFlipX(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha = 255);
-
-	LPDIRECT3DTEXTURE9 LoadTexture(LPCWSTR texturePath);
 
 	int IsKeyDown(int KeyCode);
-	void ProcessKeyBoard();
+	void ProcessKeyboard();
 
 	void Load(LPCWSTR gameFile);
-	LPSCENE GetCurrentScene();
-	int GetCurrentSceneId() { return currentScene; }
-
+	LPSCENE GetCurrentScene() { return scenes[current_scene]; }
 	void SwitchScene(int scene_id);
 
-	void SetScreenWidth(int width);
-	void SetScreenHeight(int height);
-
-	int GetScreenWidth();
-	int GetScreenHeight();
-
-	LPDIRECT3DDEVICE9 GetDirect3DDevice() { return this->d3ddv; }
-	LPDIRECT3DSURFACE9 GetBackBuffer() { return backBuffer; };
-	LPD3DXSPRITE GetSpriteHandler() { return this->spriteHandler; }
-	/*int GetBackBufferWidth() { return backBufferWidth; }
-	int GetBackBufferHeight() { return backBufferHeight; }*/
+	int GetScreenWidth() { return screen_width; }
+	int GetScreenHeight() { return screen_height; }
 
 	static void SweptAABB(
-		float ml,
-		float mt,
-		float mr,
-		float mb,
-		float dx,
-		float dy,
-		float sl,
+		float ml,			// move left 
+		float mt,			// move top
+		float mr,			// move right 
+		float mb,			// move bottom
+		float dx,			// 
+		float dy,			// 
+		float sl,			// static left
 		float st,
 		float sr,
 		float sb,
@@ -94,13 +78,13 @@ public:
 		float& nx,
 		float& ny);
 
-	bool checkAABB(float b1left, float b1top, float b1right, float b1bottom, float b2left, float b2top, float b2right, float b2bottom);
+	LPDIRECT3DDEVICE9 GetDirect3DDevice() { return this->d3ddv; }
+	LPDIRECT3DSURFACE9 GetBackBuffer() { return backBuffer; }
+	LPD3DXSPRITE GetSpriteHandler() { return this->spriteHandler; }
 
-	void SetCamPosition(float x, float y) { cam_x = x; cam_y = y; }
-	void GetCamPos(float& x, float& y) { x = cam_x; y = cam_y; }
+	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
 
 	static CGame* GetInstance();
 
 	~CGame();
 };
-

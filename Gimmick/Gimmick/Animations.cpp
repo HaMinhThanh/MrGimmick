@@ -1,17 +1,25 @@
 #include "Animations.h"
 #include "Utils.h"
 
-CAnimationSets* CAnimationSets::instance = NULL;
-void CAnimation::AddAnimation(int spriteId, DWORD time)
-{
-    int t = time;
-    if (time == 0) t = this->defaultTime;
+CAnimationSets* CAnimationSets::__instance = NULL;
 
-    LPSPRITE sprite = CSprites::GetInstance()->Get(spriteId);
-    LPANIMATION_FRAME frame = new CAnimationFrame(sprite, t);
-    frames.push_back(frame);
+void CAnimation::Add(int spriteId, DWORD time)
+{
+	int t = time;
+	if (time == 0) t = this->defaultTime;
+
+	LPSPRITE sprite = CSprites::GetInstance()->Get(spriteId);
+
+	if (sprite == NULL)
+	{
+		DebugOut(L"[ERROR] Sprite ID %d cannot be found!\n", spriteId);
+	}
+
+	LPANIMATION_FRAME frame = new CAnimationFrame(sprite, t);
+	frames.push_back(frame);
 }
 
+// NOTE: sometimes Animation object is NULL ??? HOW ??? 
 void CAnimation::Render(float x, float y, int alpha)
 {
 	DWORD now = GetTickCount();
@@ -30,37 +38,19 @@ void CAnimation::Render(float x, float y, int alpha)
 			if (currentFrame == frames.size()) currentFrame = 0;
 		}
 	}
+
 	frames[currentFrame]->GetSprite()->Draw(x, y, alpha);
 }
 
-void CAnimation::RenderDirect(float x, float y, int direct, int alpha)
+CAnimations* CAnimations::__instance = NULL;
+
+CAnimations* CAnimations::GetInstance()
 {
-	DWORD now = GetTickCount();
-	if (currentFrame == -1)
-	{
-		currentFrame = 0;
-		lastFrameTime = now;
-	}
-	else
-	{
-		DWORD t = frames[currentFrame]->GetTime();
-		if (now - lastFrameTime > t)
-		{
-			currentFrame++;
-			lastFrameTime = now;
-			if (currentFrame == frames.size()) currentFrame = 0;
-			//DebugOut(L"now: %d, lastFrameTime: %d, t: %d\n", now, lastFrameTime, t);
-		}
-	}
-	if (direct < 0)
-		frames[currentFrame]->GetSprite()->Draw(x, y, alpha);
-	else
-		frames[currentFrame]->GetSprite()->DrawFlipX(x, y, alpha);
+	if (__instance == NULL) __instance = new CAnimations();
+	return __instance;
 }
 
-CAnimations* CAnimations::instance = NULL;
-
-void CAnimations::AddAnimations(int id, LPANIMATION ani)
+void CAnimations::Add(int id, LPANIMATION ani)
 {
 	animations[id] = ani;
 }
@@ -84,19 +74,15 @@ void CAnimations::Clear()
 	animations.clear();
 }
 
-CAnimations* CAnimations::GetInstance()
-{
-	if (instance == NULL) instance = new CAnimations();
-	return instance;
-}
-
 CAnimationSets::CAnimationSets()
 {
+
 }
 
-void CAnimationSets::AddAnimationSet(int id, LPANIMATION_SET ani)
+CAnimationSets* CAnimationSets::GetInstance()
 {
-	animation_sets[id] = ani;
+	if (__instance == NULL) __instance = new CAnimationSets();
+	return __instance;
 }
 
 LPANIMATION_SET CAnimationSets::Get(unsigned int id)
@@ -108,8 +94,7 @@ LPANIMATION_SET CAnimationSets::Get(unsigned int id)
 	return ani_set;
 }
 
-CAnimationSets* CAnimationSets::GetInstance()
+void CAnimationSets::Add(int id, LPANIMATION_SET ani_set)
 {
-	if (instance == NULL) instance = new CAnimationSets();
-	return instance;
+	animation_sets[id] = ani_set;
 }

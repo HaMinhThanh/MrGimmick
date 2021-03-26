@@ -3,17 +3,24 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
-#include "Game.h"
-#include "Textures.h"
 #include "Utils.h"
+#include "Game.h"
+#include "textures.h"
 
-CTextures* CTextures::_instance = NULL;
+CTextures* CTextures::__instance = NULL;
 
 CTextures::CTextures()
 {
+
 }
 
-void CTextures::AddTexture(int id, LPCWSTR filePath, D3DCOLOR transparentColor)
+CTextures* CTextures::GetInstance()
+{
+	if (__instance == NULL) __instance = new CTextures();
+	return __instance;
+}
+
+void CTextures::Add(int id, LPCWSTR filePath, D3DCOLOR transparentColor)
 {
 	D3DXIMAGE_INFO info;
 	HRESULT result = D3DXGetImageInfoFromFile(filePath, &info);
@@ -53,11 +60,14 @@ void CTextures::AddTexture(int id, LPCWSTR filePath, D3DCOLOR transparentColor)
 	DebugOut(L"[INFO] Texture loaded Ok: id=%d, %s\n", id, filePath);
 }
 
-LPDIRECT3DTEXTURE9 CTextures::Get(unsigned int i)
+LPDIRECT3DTEXTURE9 CTextures::Get(unsigned int id)
 {
-	return textures[i];
+	return textures[id];
 }
 
+/*
+	Clear all loaded textures
+*/
 void CTextures::Clear()
 {
 	for (auto x : textures)
@@ -67,10 +77,4 @@ void CTextures::Clear()
 	}
 
 	textures.clear();
-}
-
-CTextures* CTextures::GetInstance()
-{
-    if (_instance == NULL) _instance = new CTextures();
-    return _instance;
 }

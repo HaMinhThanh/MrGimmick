@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "Game.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ using namespace std;
 #define SCREEN_HEIGHT 272
 
 #define MAX_FRAME_RATE 90
+CGame* game;
 
 //---------------------
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -36,29 +38,32 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void Update(DWORD dt)
 {
-	//Game::GetInstance()->GetCurrentScene()->Update(dt);
+	CGame::GetInstance()->GetCurrentScene()->Update(dt);
+
 
 }
 
 void Render()
 {
-	////Game* game = Game::GetInstance();
-	//LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
-	//LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
-	//LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
+	LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
+	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
+	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
 
-	//if (d3ddv->BeginScene())
-	//{
-	//	d3ddv->ColorFill(bb, NULL, game->background);
+	if (d3ddv->BeginScene())
+	{
+		// Clear back buffer with a color
+		d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
 
-	//	spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
+		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 
-	//	Game::GetInstance()->GetCurrentScene()->Render();
+		CGame::GetInstance()->GetCurrentScene()->Render();
 
-	//	spriteHandler->End();
-	//	d3ddv->EndScene();
-	//}
-	//d3ddv->Present(NULL, NULL, NULL, NULL);
+		spriteHandler->End();
+		d3ddv->EndScene();
+	}
+
+	// Display back buffer content to the screen
+	d3ddv->Present(NULL, NULL, NULL, NULL);
 }
 
 HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int ScreenHeight)
@@ -119,21 +124,23 @@ int Run()
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			if (msg.message == WM_QUIT)
-				done = 1;
+			if (msg.message == WM_QUIT) done = 1;
+
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 
 		DWORD now = GetTickCount();
 
+		// dt: the time between (beginning of last frame) and now
+		// this frame: the frame we are about to render
 		DWORD dt = now - frameStart;
 
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
 
-			//game->ProcessKeyBoard();
+			game->ProcessKeyboard();
 
 			Update(dt);
 			Render();
@@ -141,6 +148,7 @@ int Run()
 		else
 			Sleep(tickPerFrame - dt);
 	}
+
 	return 1;
 }
 
@@ -148,14 +156,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInstance, LPSTR lpCmdLine,
 {
 	HWND hWnd = CreateGameWindow(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	/*game = Game::GetInstance();
+	game = CGame::GetInstance();
 	game->Init(hWnd);
+	game->InitKeyboard();
 
-	LoadResources();
-
-	game->InitKeyBoard();
-
-	game->Load(L"mario-sample.txt");*/
+	game->Load(L"mario-sample.txt");
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 

@@ -1,27 +1,42 @@
-#include <map>
 #include <iostream>
-#include "PlayScene.h"
 #include <fstream>
 
 #include "PlayScene.h"
 #include "Utils.h"
 #include "Textures.h"
 #include "Sprites.h"
-#include "Animations.h"
+#include "Portal.h"
 
 using namespace std;
 
-#define SCENE_SECTION_UNKNOWN			-1
-#define SCENE_SECTION_TEXTURES			2
-#define SCENE_SECTION_SPRITES			3
-#define SCENE_SECTION_ANIMATIONS		4
+CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
+	CScene(id, filePath)
+{
+	key_handler = new CPlayScenceKeyHandler(this);
+}
+
+/*
+	Load scene resources from scene file (textures, sprites, animations and objects)
+	See scene1.txt, scene2.txt for detail format specification
+*/
+
+#define SCENE_SECTION_UNKNOWN -1
+#define SCENE_SECTION_TEXTURES 2
+#define SCENE_SECTION_SPRITES 3
+#define SCENE_SECTION_ANIMATIONS 4
 #define SCENE_SECTION_ANIMATION_SETS	5
-#define SCENE_SECTION_OBJECTS			6
+#define SCENE_SECTION_OBJECTS	6
+
+#define OBJECT_TYPE_GIMMICK	1
+#define OBJECT_TYPE_BRICK	4
+
+
+#define OBJECT_TYPE_PORTAL	50
 
 #define MAX_SCENE_LINE 1024
 
 
-void CPlayScene::ParseSection_Textures(string line)
+void CPlayScene::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -33,16 +48,14 @@ void CPlayScene::ParseSection_Textures(string line)
 	int G = atoi(tokens[3].c_str());
 	int B = atoi(tokens[4].c_str());
 
-	CTextures::GetInstance()->AddTexture(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
+	CTextures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
 }
 
-void CPlayScene::ParseSection_Sprites(string line)
+void CPlayScene::_ParseSection_SPRITES(string line)
 {
 	vector<string> tokens = split(line);
 
 	if (tokens.size() < 6) return; // skip invalid lines
-
-	DebugOut(L"--> %s\n", ToWSTR(line).c_str());
 
 	int ID = atoi(tokens[0].c_str());
 	int l = atoi(tokens[1].c_str());
@@ -58,16 +71,16 @@ void CPlayScene::ParseSection_Sprites(string line)
 		return;
 	}
 
-	CSprites::GetInstance()->AddSprite(ID, l, t, r, b, tex);
+	CSprites::GetInstance()->Add(ID, l, t, r, b, tex);
 }
 
-void CPlayScene::ParseSection_Animations(string line)
+void CPlayScene::_ParseSection_ANIMATIONS(string line)
 {
 	vector<string> tokens = split(line);
 
 	if (tokens.size() < 3) return; // skip invalid lines - an animation must at least has 1 frame and 1 frame time
 
-	DebugOut(L"--> %s\n", ToWSTR(line).c_str());
+	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	LPANIMATION ani = new CAnimation();
 
@@ -76,23 +89,21 @@ void CPlayScene::ParseSection_Animations(string line)
 	{
 		int sprite_id = atoi(tokens[i].c_str());
 		int frame_time = atoi(tokens[i + 1].c_str());
-		ani->AddAnimation(sprite_id, frame_time);
+		ani->Add(sprite_id, frame_time);
 	}
 
-	CAnimations::GetInstance()->AddAnimations(ani_id, ani);
+	CAnimations::GetInstance()->Add(ani_id, ani);
 }
 
-void CPlayScene::ParseSection_Animation_Sets(string line)
+void CPlayScene::_ParseSection_ANIMATION_SETS(string line)
 {
 	vector<string> tokens = split(line);
 
 	if (tokens.size() < 2) return; // skip invalid lines - an animation set must at least id and one animation id
 
-	DebugOut(L"--> %s\n", ToWSTR(line).c_str());
-
 	int ani_set_id = atoi(tokens[0].c_str());
 
-	LPANIMATION_SET s = new AnimationSet();
+	LPANIMATION_SET s = new CAnimationSet();
 
 	CAnimations* animations = CAnimations::GetInstance();
 
@@ -104,16 +115,65 @@ void CPlayScene::ParseSection_Animation_Sets(string line)
 		s->push_back(ani);
 	}
 
-	CAnimationSets::GetInstance()->AddAnimationSet(ani_set_id, s);
+	CAnimationSets::GetInstance()->Add(ani_set_id, s);
 }
 
-void CPlayScene::ParseSection_Objects(string line)
+/*
+	Parse a line in section [OBJECTS]
+*/
+void CPlayScene::_ParseSection_OBJECTS(string line)
 {
-}
+	vector<string> tokens = split(line);
 
-CPlayScene::CPlayScene(int id, LPCWSTR filePath): CScene(id, filePath)
-{
-	keyHandler = new CPlayScenceKeyHandler(this);
+	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+
+	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
+
+	int object_type = atoi(tokens[0].c_str());
+	float x = atof(tokens[1].c_str());
+	float y = atof(tokens[2].c_str());
+
+	int ani_set_id = atoi(tokens[3].c_str());
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+
+	CGameObject* obj = NULL;
+
+	switch (object_type)
+	{
+	case OBJECT_TYPE_BRICK: obj = new CBrick(); break;
+	case OBJECT_TYPE_GIMMICK:
+		if (player != NULL)
+		{
+			DebugOut(L"[ERROR] MARIO object was created before!\n");
+			return;
+		}
+		obj = new CGimmick(x, y);
+		player = (CGimmick*)obj;
+
+		DebugOut(L"[INFO] Player object created!\n");
+		break;
+	
+	case OBJECT_TYPE_PORTAL:
+	{
+		float r = atof(tokens[4].c_str());
+		float b = atof(tokens[5].c_str());
+		int scene_id = atoi(tokens[6].c_str());
+		obj = new CPortal(x, y, r, b, scene_id);
+	}
+	break;
+	default:
+		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
+		return;
+	}
+
+	// General object setup
+	obj->SetPosition(x, y);
+
+	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+
+	obj->SetAnimationSet(ani_set);
+	objects.push_back(obj);
 }
 
 void CPlayScene::Load()
@@ -133,9 +193,7 @@ void CPlayScene::Load()
 
 		if (line[0] == '#') continue;	// skip comment lines	
 
-		if (line == "[TEXTURES]") {
-			section = SCENE_SECTION_TEXTURES; continue;
-		}
+		if (line == "[TEXTURES]") { section = SCENE_SECTION_TEXTURES; continue; }
 		if (line == "[SPRITES]") {
 			section = SCENE_SECTION_SPRITES; continue;
 		}
@@ -148,7 +206,6 @@ void CPlayScene::Load()
 		if (line == "[OBJECTS]") {
 			section = SCENE_SECTION_OBJECTS; continue;
 		}
-
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 
 		//
@@ -156,42 +213,96 @@ void CPlayScene::Load()
 		//
 		switch (section)
 		{
-		case SCENE_SECTION_TEXTURES: ParseSection_Textures(line); break;
-		case SCENE_SECTION_SPRITES: ParseSection_Sprites(line); break;
-		case SCENE_SECTION_ANIMATIONS: ParseSection_Animations(line); break;
-		case SCENE_SECTION_ANIMATION_SETS: ParseSection_Animation_Sets(line); break;
-		case SCENE_SECTION_OBJECTS: ParseSection_Objects(line); break;
-	
+		case SCENE_SECTION_TEXTURES: _ParseSection_TEXTURES(line); break;
+		case SCENE_SECTION_SPRITES: _ParseSection_SPRITES(line); break;
+		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
+		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
+		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 		}
 	}
 
 	f.close();
 
-	//CTextures::GetInstance()->AddTexture(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
+	CTextures::GetInstance()->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
 void CPlayScene::Update(DWORD dt)
 {
+	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
+	// TO-DO: This is a "dirty" way, need a more organized way 
+
+	vector<LPGAMEOBJECT> coObjects;
+	for (size_t i = 1; i < objects.size(); i++)
+	{
+		coObjects.push_back(objects[i]);
+	}
+
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		objects[i]->Update(dt, &coObjects);
+	}
+
+	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
+	if (player == NULL) return;
+
+	// Update camera to follow mario
+	float cx, cy;
+	player->GetPosition(cx, cy);
+
+	CGame* game = CGame::GetInstance();
+	cx -= game->GetScreenWidth() / 2;
+	cy -= game->GetScreenHeight() / 2;
+
+	CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
 }
 
 void CPlayScene::Render()
 {
+	for (int i = 0; i < objects.size(); i++)
+		objects[i]->Render();
 }
 
+/*
+	Unload current scene
+*/
 void CPlayScene::Unload()
 {
-}
+	for (int i = 0; i < objects.size(); i++)
+		delete objects[i];
 
-void CPlayScenceKeyHandler::KeyState(BYTE* states)
-{
+	objects.clear();
+	player = NULL;
+
+	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
 void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
+	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
+
+	CGimmick* gimmick = ((CPlayScene*)scence)->GetPlayer();
+	switch (KeyCode)
+	{
+	case DIK_SPACE:
+		gimmick->SetState(GIMMICK_STATE_JUMP);
+		break;
+	
+	}
 }
 
-void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
+void CPlayScenceKeyHandler::KeyState(BYTE* states)
 {
+	CGame* game = CGame::GetInstance();
+	CGimmick* gimmick = ((CPlayScene*)scence)->GetPlayer();
+
+	// disable control key when Mario die 
+
+	if (game->IsKeyDown(DIK_RIGHT))
+		gimmick->SetState(GIMMICK_STATE_WALKING_RIGHT);
+	else if (game->IsKeyDown(DIK_LEFT))
+		gimmick->SetState(GIMMICK_STATE_WALKING_LEFT);
+	else
+		gimmick->SetState(GIMMICK_STATE_IDLE);
 }
