@@ -9,6 +9,7 @@
 #include "Sprites.h"
 #include "Animations.h"
 
+
 using namespace std;
 
 #define SCENE_SECTION_UNKNOWN			-1
@@ -17,6 +18,16 @@ using namespace std;
 #define SCENE_SECTION_ANIMATIONS		4
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS			6
+
+#define MAX_SCENE_LINE 1024
+
+#define OBJECT_TYPE_GIMMICK	1
+
+
+
+#define SCENE_SECTION_MAP				7
+
+#define OBJECT_TYPE_PORTAL	50
 
 #define MAX_SCENE_LINE 1024
 
@@ -109,6 +120,65 @@ void CPlayScene::ParseSection_Animation_Sets(string line)
 
 void CPlayScene::ParseSection_Objects(string line)
 {
+	vector<string> tokens = split(line);
+
+	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+
+	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
+
+	int object_type = atoi(tokens[0].c_str());
+	float x = atof(tokens[1].c_str());
+	float y = atof(tokens[2].c_str());
+
+	int ani_set_id = atoi(tokens[3].c_str());
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+
+	CGameObject* obj = NULL;
+
+	switch (object_type)
+	{
+	case OBJECT_TYPE_PORTAL:
+	{
+		float r = atof(tokens[4].c_str());
+		float b = atof(tokens[5].c_str());
+		int scene_id = atoi(tokens[6].c_str());
+		//obj = new CPortal(x, y, r, b, scene_id);
+	}
+	break;
+	case OBJECT_TYPE_GIMMICK:
+		if (player != NULL)
+		{
+			DebugOut(L"[ERROR] MARIO object was created before!\n");
+			return;
+		}
+		obj = new CGimmick(x, y);
+		player = (CGimmick*)obj;
+
+		DebugOut(L"[INFO] Player object created!\n");
+		break;
+	
+	{
+		float r = atof(tokens[4].c_str());
+		float b = atof(tokens[5].c_str());
+		int scene_id = atoi(tokens[6].c_str());
+		//obj = new CPortal(x, y, r, b, scene_id);
+	}
+	break;
+	default:
+		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
+		return;
+	}
+	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+	if (obj != NULL)
+	{
+
+		{
+			obj->SetPosition(x, y);
+			obj->SetAnimationSet(ani_set);
+			
+		}
+	}
 }
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath): CScene(id, filePath)
