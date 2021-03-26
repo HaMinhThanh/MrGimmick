@@ -28,6 +28,7 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_OBJECTS	6
 
 #define OBJECT_TYPE_GIMMICK	1
+#define OBJECT_TYPE_BRICK	4
 
 
 #define OBJECT_TYPE_PORTAL	50
@@ -140,6 +141,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	switch (object_type)
 	{
+	case OBJECT_TYPE_BRICK: obj = new CBrick(); break;
 	case OBJECT_TYPE_GIMMICK:
 		if (player != NULL)
 		{

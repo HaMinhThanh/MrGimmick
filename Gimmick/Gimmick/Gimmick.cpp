@@ -26,11 +26,13 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// Simple fall down
 	vy += GIMMICK_GRAVITY * dt;
+	
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
+	CalcPotentialCollisions(coObjects, coEvents);
 
 
 	// reset untouchable timer if untouchable time has passed
@@ -84,7 +86,7 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CGimmick::Render()
 {
-	int ani = 0;
+	int ani = -1;
 	if (state == GIMMICK_STATE_WALKING_RIGHT)
 	{
 		ani = GIMMICK_ANI_WALKING_RIGHT;
