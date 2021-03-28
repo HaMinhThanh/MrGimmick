@@ -285,10 +285,34 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	CGimmick* gimmick = ((CPlayScene*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
-	case DIK_SPACE:
-		gimmick->SetState(GIMMICK_STATE_JUMP);
+	case DIK_S:
+		if (gimmick->GetJumping() == 0)
+		{
+			gimmick->SetState(GIMMICK_STATE_JUMP);
+			gimmick->SetJumping(1);
+			if (gimmick->GetDoubleJumpStart() == 0)
+			{
+				//gimmick->SetState(MARIO_STATE_JUMP_HIGH_SPEED);
+				gimmick->SetDoubleJumpStart();
+				
+			}
+		}
+
+	}
+}
+
+void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
+{
+	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
+
+	CGimmick* gimmick = ((CPlayScene*)scence)->GetPlayer();
+	float x, y;
+	gimmick->GetPosition(x, y);
+	switch (KeyCode)
+	{
+	case DIK_S:
+		gimmick->ResetDoubleJumpStart();
 		break;
-	
 	}
 }
 
