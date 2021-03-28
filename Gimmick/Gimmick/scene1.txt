@@ -5,7 +5,10 @@
 20	textures\enemy.png	57	189	255
 30	textures\enemy2.png	57	189	255
 40	textures\item.png	215	121	214
-
+# TileSet
+11	textures\tileset\1a.png	180	230	30
+12	textures\tileset\1b.png	180	230	30
+13	textures\tileset\1c.png	180	230	30
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -174,3 +177,13 @@
 4	202	160	4
 4	218	160	4
 4	234	160	4
+[MAP_TEXTURES]
+#idScene	rowSprites	columnSprites	IDTileSet
+1	7	11	11	
+[MAP]
+# filePath	column	row	index	align
+map/map_1a.txt	64	24	0	0
+
+[CAMERA]
+#xLeft	xRight
+0	1024
