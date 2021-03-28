@@ -3,7 +3,7 @@ start	1
 #scene list
 [SCENES]
 1	scene1.txt
-2	scene1.txt
-3	scene2.txt
+2	scene2.txt
+3	scene3.txt
 4	scene4.txt
 

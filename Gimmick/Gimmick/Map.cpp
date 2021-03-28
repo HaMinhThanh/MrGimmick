@@ -61,13 +61,13 @@ void CMap::DrawMap(int cam_x, int cam_y)
 	int top = (int)(cam_y) / MAP_CELL_SIZE;
 
 	int left = (int)(cam_x) / MAP_CELL_SIZE;
-	int right = (int)(cam_x + SCREEN_HEIGHT) / MAP_CELL_SIZE;
+	int right = (int)(cam_x + SCREEN_HEIGHT ) / MAP_CELL_SIZE;
 
 	CSprites* sprites = CSprites::GetInstance();
 
 	for (int row = top; row < _row_max; row++)
 	{
-		for (int column = left; column < right + 2; column++)	// hệ số +2 sử dụng để fix lỗi logic k vẽ đủ map vì nhất định cell size map phải bằng 32
+		for (int column = left; column < right + 4; column++)	// hệ số +4 sử dụng để fix lỗi logic k vẽ đủ map vì nhất định cell size map phải bằng 32
 		{
 			if (row <= _row_max && row >= 0 && column < _column_max && column >= 0)
 			{
