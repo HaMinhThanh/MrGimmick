@@ -21,11 +21,12 @@ CGimmick::CGimmick(float x, float y) : CGameObject()
 
 void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	vy += GIMMICK_GRAVITY * dt;
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	vy += GIMMICK_GRAVITY * dt;
+	//vy += GIMMICK_GRAVITY * dt;
 	
 
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -41,6 +42,30 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		untouchable_start = 0;
 		untouchable = 0;
 	}
+
+	if (jump == true && doubleJump_start != 0)
+	{
+		if (GetTickCount() - doubleJump_start > 100)
+		{
+			vy = -MARIO_DOUBLE_JUMP_SPEED;
+			doubleJump_start = 0;
+		}
+	}
+
+	if (maxjumping == 1)
+	{
+		 if (GetTickCount() - time_maxjumping >= 200)
+		{
+			maxjumping = 0;
+			time_maxjumping = 0;
+		}
+	}
+	else
+	{
+		maxjumping = 0;
+		time_maxjumping = 0;
+	}
+
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -68,6 +93,19 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (nx != 0) vx = 0;
 		if (ny != 0) vy = 0;
 
+		//mario touches ground
+		if (ny != 0 && nx == 0)
+		{
+			if (GetJumping() == 1)
+			{
+				jump = 0;
+				doubleJump_start = 0;
+
+			}
+
+			//CanFall = 0;
+		}
+
 
 		//
 		// Collision logic with other objects
@@ -86,31 +124,41 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CGimmick::Render()
 {
-	int ani = -1;
-	if (state == GIMMICK_STATE_WALKING_RIGHT)
-	{
-		ani = GIMMICK_ANI_WALKING_RIGHT;
-	}
-	else if (state == GIMMICK_STATE_WALKING_LEFT)
-	{
-		ani = GIMMICK_ANI_WALKING_LEFT;
-	}
-	else if (state == GIMMICK_STATE_IDLE)
-	{
-		if (nx > 0)
+		int ani = -1;
+		if (jump == 1)
 		{
-			ani = GIMMICK_ANI_IDLE_RIGHT;
+			if (nx > 0)
+				ani = GIMMICK_ANI_JUMPING_RIGHT;
+			else
+				ani = GIMMICK_ANI_JUMPING_LEFT;
 		}
-		else
-			ani = GIMMICK_ANI_IDLE_LEFT;
-	}
+		else if (state == GIMMICK_STATE_WALKING_RIGHT)
+		{
+			ani = GIMMICK_ANI_WALKING_RIGHT;
+		
+		}
+		else if (state == GIMMICK_STATE_WALKING_LEFT)
+		{
+			ani = GIMMICK_ANI_WALKING_LEFT;
+		}
+		else if (state == GIMMICK_STATE_IDLE)
+		{
+			if (nx > 0)
+			{
+				ani = GIMMICK_ANI_IDLE_RIGHT;
+			}
+			else
+				ani = GIMMICK_ANI_IDLE_LEFT;
+		}
+		
 
-	int alpha = 255;
-	if (untouchable) alpha = 128;
 
-	animation_set->at(ani)->Render(x, y, alpha);
+		int alpha = 255;
+		if (untouchable) alpha = 128;
 
-	RenderBoundingBox();
+		animation_set->at(ani)->Render(x, y, alpha);
+
+		RenderBoundingBox();
 }
 
 void CGimmick::SetState(int state)
@@ -135,6 +183,10 @@ void CGimmick::SetState(int state)
 		vx = 0;
 		break;
 
+	case MARIO_STATE_JUMP_HIGH_SPEED:
+		vy = -MARIO_JUMP_HIGHT_SPEED_Y/5;
+		break;
+
 	}
 }
 
@@ -142,6 +194,11 @@ void CGimmick::GetBoundingBox(float& left, float& top, float& right, float& bott
 {
 	left = x;
 	top = y;
+	if (jump==1)
+	{
+		right = x + GIMMICK_BBOX_WIDTH;
+		bottom = y + GIMMICK_JUMP_BBOX_HEIGHT;
+	}
 	right = x + GIMMICK_BBOX_WIDTH;
 	bottom = y + GIMMICK_BBOX_HEIGHT;
 
