@@ -7,6 +7,9 @@
 #include "Sprites.h"
 #include "Portal.h"
 
+// include enemies
+#include "Bomb.h"
+
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
@@ -26,9 +29,13 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_ANIMATIONS 4
 #define SCENE_SECTION_ANIMATION_SETS	5
 #define SCENE_SECTION_OBJECTS	6
+#define SCENE_SECTION_MAP_TEXTURES	7
+#define SCENE_SECTION_MAP	8
+#define SCENE_SECTION_CAMERA 9
 
 #define OBJECT_TYPE_GIMMICK	1
 #define OBJECT_TYPE_BRICK	4
+#define OBJECT_TYPE_BOMB	5
 
 
 #define OBJECT_TYPE_PORTAL	50
@@ -141,7 +148,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	switch (object_type)
 	{
-	case OBJECT_TYPE_BRICK: obj = new CBrick(); break;
+	
 	case OBJECT_TYPE_GIMMICK:
 		if (player != NULL)
 		{
@@ -153,7 +160,15 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
-	
+
+	case OBJECT_TYPE_BRICK: 
+		obj = new CBrick(); 
+		break;
+
+	case OBJECT_TYPE_BOMB:
+		obj = new CBomb();
+		break;
+
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -176,8 +191,59 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	objects.push_back(obj);
 }
 
+void CPlayScene::_ParseSection_MAP_TEXTURES(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 4) return; // skip invalid lines
+
+	int IDMap = atoi(tokens[0].c_str());
+	int row = atoi(tokens[1].c_str());
+	int column = atoi(tokens[2].c_str());
+	int IDTileSet = atoi(tokens[3].c_str());
+
+	LPDIRECT3DTEXTURE9 tex = CTextures::GetInstance()->Get(IDTileSet);
+
+	int index = IDMap;
+	for (int i = 0; i < row; i++)
+	{
+		for (int j = 0; j < column; j++)
+		{
+			DebugOut(L"ok");
+			CSprites::GetInstance()->Add(index, j * 16, i * 16, j * 16 + 16, i * 16 + 16, tex);
+			index = index + 1;
+		}
+	}
+}
+
+void CPlayScene::_ParseSection_CAMERA(string line)
+{
+	vector<string> tokens = split(line);
+	if (tokens.size() < 2)return;	// skip invalid lines
+	_xLeft = atoi(tokens[0].c_str());
+	_xRight = atoi(tokens[1].c_str());
+}
+
+void CPlayScene::_ParseSection_MAP(string line)
+{
+	vector<string> tokens = split(line);
+
+	if (tokens.size() < 4) return; // skip invalid lines
+	wstring filePath = ToWSTR(tokens[0]);
+	int row = atoi(tokens[2].c_str());
+	int column = atoi(tokens[1].c_str());
+	int index = atoi(tokens[3].c_str());
+	int align = atoi(tokens[4].c_str());
+	map->SetValueInMap(row, column, index, align);
+	map->LoadMap(filePath);
+}
+
 void CPlayScene::Load()
 {
+
+	_xLeft = _xRight = -1;
+	map = CMap::GetInstance();
+
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 
 	ifstream f;
@@ -206,6 +272,15 @@ void CPlayScene::Load()
 		if (line == "[OBJECTS]") {
 			section = SCENE_SECTION_OBJECTS; continue;
 		}
+		if (line == "[MAP_TEXTURES]") {
+			section = SCENE_SECTION_MAP_TEXTURES; continue;
+		}
+		if (line == "[MAP]"){
+			section = SCENE_SECTION_MAP; continue;
+		}
+		if (line == "[CAMERA]") {
+			section = SCENE_SECTION_CAMERA; continue;
+		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 
 		//
@@ -218,6 +293,9 @@ void CPlayScene::Load()
 		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
+		case SCENE_SECTION_MAP_TEXTURES: _ParseSection_MAP_TEXTURES(line); break;
+		case SCENE_SECTION_MAP: _ParseSection_MAP(line); break;
+		case SCENE_SECTION_CAMERA: _ParseSection_CAMERA(line); break;
 		}
 	}
 
@@ -255,11 +333,16 @@ void CPlayScene::Update(DWORD dt)
 	cx -= game->GetScreenWidth() / 2;
 	cy -= game->GetScreenHeight() / 2;
 
-	CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
+	CGame::GetInstance()->SetCamPos(cx, 200);
 }
 
 void CPlayScene::Render()
 {
+	float cx, cy;
+	CGame::GetInstance()->GetCamPos(cx, cy);
+
+	map->DrawMap(cx, cy);
+
 	for (int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
 }

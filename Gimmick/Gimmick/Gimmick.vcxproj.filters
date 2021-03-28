@@ -129,6 +129,9 @@
     <ClInclude Include="Brick.h">
       <Filter>Objects\Brick</Filter>
     </ClInclude>
+    <ClInclude Include="Bomb.h">
+      <Filter>Objects\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animations.cpp">
@@ -187,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="Portal.cpp">
       <Filter>Objects\Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="Bomb.cpp">
+      <Filter>Objects\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

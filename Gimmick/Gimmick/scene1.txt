@@ -5,7 +5,10 @@
 20	textures\enemy.png	57	189	255
 30	textures\enemy2.png	57	189	255
 40	textures\item.png	215	121	214
-
+# TileSet
+11	textures\tileset\1a.png	180	230	30
+12	textures\tileset\1b.png	180	230	30
+13	textures\tileset\1c.png	180	230	30
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -126,9 +129,9 @@
 
 #======back-enemy
 #walk right
-300	30000	100	300001	100	300002	100
+300	30000	100	30001	100	30002	100
 #walk left
-301	30003	100	300004	100	300005	100
+301	30003	100	30004	100	30005	100
 #fly 	right
 302	30006	100	30007	100	30008	100	30009	100	30010	100
 #fly left
@@ -157,9 +160,21 @@
 # Gimmick
 
 1	0	0	1
-4	-22	60	4
-4	-6	60	4
-4	10	60	4
-4	26	60	4
-4	42	60	4
-4	58	60	4
+4	-22	300	4
+4	-6	300	4
+4	10	300	4
+4	26	300	4
+4	42	300	4
+4	58	300	4
+5	-20	300	3
+
+[MAP_TEXTURES]
+#idScene	rowSprites	columnSprites	IDTileSet
+1	7	11	11	
+[MAP]
+# filePath	column	row	index	align
+map/map_1a.txt	64	24	0	0
+
+[CAMERA]
+#xLeft	xRight
+0	1024
