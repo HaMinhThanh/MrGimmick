@@ -11,7 +11,7 @@
 #define GIMMICK_JUMP_DEFLECT_SPEED 0.2f
 #define GIMMICK_GRAVITY			0.0008f
 #define GIMMICK_DIE_DEFLECT_SPEED	 0.5f
-#define GIMMiCK_UNTOUCHABLE_TIME 5000
+#define GIMMiCK_UNTOUCHABLE_TIME 4000
 
 #define GIMMICK_STATE_IDLE			0
 #define GIMMICK_STATE_WALKING_RIGHT	100
@@ -59,6 +59,7 @@ public:
 	void SetJumping(int jump) { this->jump = jump; };
 	int GetJumping() { return jump; };
 	DWORD time_maxjumping = 0;
+
 	// Check for double jump
 	DWORD doubleJump_start = 0;
 	void StartJumpingMax() { maxjumping = 1, time_maxjumping = GetTickCount(); }

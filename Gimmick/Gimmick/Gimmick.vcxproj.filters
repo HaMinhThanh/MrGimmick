@@ -70,6 +70,9 @@
     <Filter Include="Objects\ObjectManager">
       <UniqueIdentifier>{b127d8ad-747e-45e7-901a-bdcc20a03ab1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Objects\HidenObject">
+      <UniqueIdentifier>{5b7d2cdc-cce2-4bd8-b802-c9948504ae26}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animations.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="Bomb.h">
       <Filter>Objects\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Slide.h">
+      <Filter>Objects\HidenObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animations.cpp">
@@ -193,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="Bomb.cpp">
       <Filter>Objects\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Slide.cpp">
+      <Filter>Objects\HidenObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
