@@ -156,6 +156,9 @@
 407	40007	100
 408	40008	100
 
+#star
+200	20002	100	20003	100	20004	100
+
 
 [ANIMATION_SETS]
 # GimMick
@@ -176,10 +179,14 @@
 407	407
 408	408
 
-
+#star
+2	200
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type
+
+#star
+2	-10	-10	2
 4	16	353	401
 4	32	353	401
 4	48	353	401
