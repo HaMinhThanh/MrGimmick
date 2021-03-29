@@ -166,7 +166,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 
 	case OBJECT_TYPE_BOMB:
-		obj = new CBomb();
+		obj = new CBomb(x, y);
 		break;
 
 	case OBJECT_TYPE_PORTAL:
@@ -210,7 +210,7 @@ void CPlayScene::_ParseSection_MAP_TEXTURES(string line)
 		for (int j = 0; j < column; j++)
 		{
 			DebugOut(L"ok");
-			CSprites::GetInstance()->Add(index, j * 16, i * 16, j * 16 + 16, i * 16 + 16, tex);
+			CSprites::GetInstance()->Add(index, j * 32, i * 32, j * 32 + 32, i * 32 + 32, tex);
 			index = index + 1;
 		}
 	}
@@ -333,7 +333,7 @@ void CPlayScene::Update(DWORD dt)
 	cx -= game->GetScreenWidth() / 2;
 	cy -= game->GetScreenHeight() / 2;
 
-	CGame::GetInstance()->SetCamPos(cx, 200);
+	CGame::GetInstance()->SetCamPos(cx, 150);
 }
 
 void CPlayScene::Render()

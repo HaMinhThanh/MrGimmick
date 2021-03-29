@@ -1,14 +1,14 @@
 #include "Bomb.h"
 
-//CBomb::CBomb(float _x, float _y)
-//{
-//	this->x = _x;
-//	this->y = _y;
-//}
-//
-//CBomb::~CBomb()
-//{
-//}
+CBomb::CBomb(float _x, float _y)
+{
+	this->x = _x;
+	this->y = _y;
+}
+
+CBomb::~CBomb()
+{
+}
 
 void CBomb::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {

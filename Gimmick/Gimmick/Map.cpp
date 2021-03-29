@@ -67,11 +67,11 @@ void CMap::DrawMap(int cam_x, int cam_y)
 
 	for (int row = top; row < _row_max; row++)
 	{
-		for (int column = left; column < right + 4; column++)	// hệ số +4 sử dụng để fix lỗi logic k vẽ đủ map vì nhất định cell size map phải bằng 32
+		for (int column = left; column < right + 3; column++)	// hệ số +3 sử dụng để fix lỗi logic k vẽ đủ map vì nhất định cell size map phải bằng 32
 		{
 			if (row <= _row_max && row >= 0 && column < _column_max && column >= 0)
 			{
-				sprites->Get(getTile(row, column) + index)->Draw(16 * column, 16 * row , 255);
+				sprites->Get(getTile(row, column) + index)->Draw(32 * column, 32 * row , 255);
 			}
 		}
 	}
