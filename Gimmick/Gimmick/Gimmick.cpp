@@ -8,6 +8,16 @@
 
 #include "Portal.h"
 
+CGimmick* CGimmick::_instance = NULL;
+
+CGimmick* CGimmick::GetInstance(float x, float y)
+{
+	if (_instance == NULL)
+		_instance = new CGimmick(x, y);
+
+	return _instance;
+}
+
 CGimmick::CGimmick(float x, float y) : CGameObject()
 {
 	untouchable = 0;

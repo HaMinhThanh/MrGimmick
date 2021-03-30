@@ -2,6 +2,13 @@
 #include "Enemy.h"
 #include "GameObject.h"
 
+#define BOMB_STATE_WALKING_RIGHT	100
+#define BOMB_STATE_WALKING_LEFT		200
+#define BOMB_STATE_FLY				300
+#define BOMB_STATE_DIE				900
+
+#define BOMB_GRAVITY		0.002f
+
 #define BOMB_BBOX_WIDTH		16
 #define BOMB_BBOX_HEIGHT	16
 

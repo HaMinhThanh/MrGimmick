@@ -36,6 +36,8 @@
 
 class CGimmick : public CGameObject
 {
+	static CGimmick* _instance;
+
 	int untouchable;
 	DWORD untouchable_start;
 
@@ -48,6 +50,8 @@ class CGimmick : public CGameObject
 	int holdStar = 0;
 	
 public:
+	static CGimmick* GetInstance(float x, float y);
+
 	CGimmick(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();

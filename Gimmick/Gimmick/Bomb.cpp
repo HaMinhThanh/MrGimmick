@@ -1,4 +1,5 @@
 #include "Bomb.h"
+#include "Brick.h"
 
 CBomb::CBomb(float _x, float _y)
 {
@@ -13,6 +14,19 @@ CBomb::~CBomb()
 void CBomb::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
+
+	vy += BOMB_GRAVITY * dt;
+
+	vector<LPGAMEOBJECT> Bricks;
+	Bricks.clear();
+
+	for (UINT i = 0; i < coObjects->size(); i++) {
+
+		if (dynamic_cast<CBrick*>(coObjects->at(i))) {
+
+			Bricks.push_back(coObjects->at(i));
+		}
+	}
 }
 
 void CBomb::Render()

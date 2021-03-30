@@ -153,13 +153,19 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 	
 	case OBJECT_TYPE_GIMMICK:
+
+		obj = CGimmick::GetInstance(x, y);
+
 		if (player != NULL)
 		{
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
 		}
-		obj = new CGimmick(x, y);
-		player = (CGimmick*)obj;
+
+		/*obj = new CGimmick(x, y);
+		player = (CGimmick*)obj;*/
+
+		player = CGimmick::GetInstance(x, y);
 
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
