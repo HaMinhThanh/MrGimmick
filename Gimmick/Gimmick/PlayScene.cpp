@@ -339,7 +339,7 @@ void CPlayScene::Update(DWORD dt)
 	cx -= game->GetScreenWidth() / 2;
 	cy -= game->GetScreenHeight() / 2;
 
-	CGame::GetInstance()->SetCamPos(cx, 150);
+	CGame::GetInstance()->SetCamPos((int)cx, 150);
 }
 
 void CPlayScene::Render()
@@ -405,8 +405,11 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		gimmick->ResetDoubleJumpStart();
 		break;
 	case DIK_A:
-		gimmick->SetShoot(1);
 		gimmick->SetHoldStar(0);
+		if (gimmick->GetShoot() == 0)
+		{
+			gimmick->SetShoot(1);
+		}
 		break;
 	}
 	

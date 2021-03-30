@@ -28,7 +28,7 @@ void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGimmick* gimmick = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CGameObject::Update(dt, coObjects);
-	if (GetTickCount() - Firinng_start > 1300 && Fly == 1)
+	if (GetTickCount() - Firinng_start > 1300 && Fly == 1 && gimmick->GetHoldStar() ==0)
 	{
 		vx = 0;
 		Fly = 0;
@@ -37,7 +37,7 @@ void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (gimmick->GetHoldStar() == 1)
 	{
 		x = gimmick->x;
-		y = gimmick->y-10;
+		y = gimmick->y-15;
 	}
 	
 	else if (gimmick->GetShoot() == 1 && GetFly() == 0 && gimmick->GetHoldStar() != 1)
@@ -47,8 +47,8 @@ void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetY(gimmick->y);
 		FiringStart();
 		gimmick->SetShoot(0);
-		vy = 0.9f;
-		vx = 0.15f;
+		vy = 1.2f;
+		vx = 0.3f;
 
 	}
 
@@ -61,7 +61,7 @@ void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (coEvents.size() == 0)
 		{
 			if (gimmick->nx > 0)
-			{
+			{ 
 				x += dx;
 				y += dy;
 				//dau tien vy >0, dap xuong dat roi thi am

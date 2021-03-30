@@ -24,7 +24,7 @@ public:
 	void SetFly(int fly) { Fly = fly; };
 	DWORD Firinng_start;
 	void FiringStart() { Fly = 1; Firinng_start = GetTickCount(); };
-	void SetY(float y) { Y = y+10; };
+	void SetY(float y) { Y = y+30.0f; };
 	CStar();
 };
 
