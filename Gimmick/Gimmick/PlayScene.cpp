@@ -419,8 +419,6 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		if (gimmick->GetHoldStar() == 0)
 			gimmick->SetHoldStar(1);
 	}
-
-
 	else
 
 		gimmick->SetState(GIMMICK_STATE_IDLE);
