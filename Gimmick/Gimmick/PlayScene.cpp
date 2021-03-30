@@ -6,6 +6,7 @@
 #include "Textures.h"
 #include "Sprites.h"
 #include "Portal.h"
+#include"Star.h"
 
 // include enemies
 #include "Bomb.h"
@@ -34,8 +35,10 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 #define SCENE_SECTION_CAMERA 9
 
 #define OBJECT_TYPE_GIMMICK	1
+#define	OBJECT_TYPE_STAR 2
 #define OBJECT_TYPE_BRICK	4
 #define OBJECT_TYPE_BOMB	5
+
 
 
 #define OBJECT_TYPE_PORTAL	50
@@ -163,6 +166,9 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 	case OBJECT_TYPE_BRICK: 
 		obj = new CBrick(); 
+		break;
+	case OBJECT_TYPE_STAR:
+		obj = new CStar();
 		break;
 
 	case OBJECT_TYPE_BOMB:
@@ -333,7 +339,7 @@ void CPlayScene::Update(DWORD dt)
 	cx -= game->GetScreenWidth() / 2;
 	cy -= game->GetScreenHeight() / 2;
 
-	CGame::GetInstance()->SetCamPos(cx, 150);
+	CGame::GetInstance()->SetCamPos((int)cx, 150);
 }
 
 void CPlayScene::Render()
@@ -377,11 +383,13 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			{
 				//gimmick->SetState(MARIO_STATE_JUMP_HIGH_SPEED);
 				gimmick->SetDoubleJumpStart();
-				
+
 			}
 		}
-
-	}
+		break;
+	
+	} 
+	
 }
 
 void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
@@ -396,7 +404,15 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_S:
 		gimmick->ResetDoubleJumpStart();
 		break;
+	case DIK_A:
+		gimmick->SetHoldStar(0);
+		if (gimmick->GetShoot() == 0)
+		{
+			gimmick->SetShoot(1);
+		}
+		break;
 	}
+	
 }
 
 void CPlayScenceKeyHandler::KeyState(BYTE* states)

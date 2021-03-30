@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Framework">
       <UniqueIdentifier>{4a131503-d8ed-4a16-89c3-72f0925a6e7e}</UniqueIdentifier>
     </Filter>
@@ -69,6 +65,10 @@
     </Filter>
     <Filter Include="Objects\ObjectManager">
       <UniqueIdentifier>{b127d8ad-747e-45e7-901a-bdcc20a03ab1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +132,9 @@
     <ClInclude Include="Bomb.h">
       <Filter>Objects\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Star.h">
+      <Filter>Objects\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animations.cpp">
@@ -193,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="Bomb.cpp">
       <Filter>Objects\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Star.cpp">
+      <Filter>Objects\Item</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

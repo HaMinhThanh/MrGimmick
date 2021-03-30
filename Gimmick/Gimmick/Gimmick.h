@@ -44,6 +44,9 @@ class CGimmick : public CGameObject
 	int jump = 0;
 	int maxjumping = 0;
 	bool isMaxJumping = false;
+	int shootFire = 0;
+	int holdStar = 0;
+	
 public:
 	CGimmick(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
@@ -66,5 +69,9 @@ public:
 	void ResetDoubleJumpStart() { doubleJump_start = 0; }
 	void SetDoubleJumpStart() { doubleJump_start = GetTickCount(); }
 	DWORD GetDoubleJumpStart() { return doubleJump_start; }
+	int GetShoot() { return shootFire; };
+	void SetShoot(int shoot) { shootFire=shoot; };
+	int GetHoldStar() { return holdStar; };
+	void SetHoldStar(int hold) { holdStar = hold; };
 };
 
