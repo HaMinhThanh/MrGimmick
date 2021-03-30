@@ -7,6 +7,7 @@
 #include "Game.h"
 
 #include "Portal.h"
+#include "Bomb.h"
 
 CGimmick* CGimmick::_instance = NULL;
 
@@ -36,8 +37,7 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt);
 
 	// Simple fall down
-	//vy += GIMMICK_GRAVITY * dt;
-	
+	//vy += GIMMICK_GRAVITY * dt;	
 
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -97,11 +97,7 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		//	x += nx*abs(rdx); 
 
 		// block every object first!
-		x += min_tx * dx + nx * 0.4f;
-		y += min_ty * dy + ny * 0.4f;
-
-		if (nx != 0) vx = 0;
-		if (ny != 0) vy = 0;
+		
 
 		//mario touches ground
 		if (ny != 0 && nx == 0)
@@ -115,8 +111,6 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 			//CanFall = 0;
 		}
-
-
 		//
 		// Collision logic with other objects
 		//
@@ -124,8 +118,18 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			
+			if (dynamic_cast<CBomb*>(e->obj)) {
+
+				if (e->ny != 0 && e->nx == 0)
+					vy = 0;
+			}
 		}
+
+		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.4f;
+
+		if (nx != 0) vx = 0;
+		if (ny != 0) vy = 0;
 	}
 
 	// clean up collision events
@@ -135,6 +139,7 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CGimmick::Render()
 {
 		int ani = -1;
+
 		if (jump == 1)
 		{
 			if (nx > 0)
@@ -151,7 +156,7 @@ void CGimmick::Render()
 		{
 			ani = GIMMICK_ANI_WALKING_LEFT;
 		}
-		else if (state == GIMMICK_STATE_IDLE)
+		else //if (state == GIMMICK_STATE_IDLE)
 		{
 			if (nx > 0)
 			{
@@ -160,8 +165,6 @@ void CGimmick::Render()
 			else
 				ani = GIMMICK_ANI_IDLE_LEFT;
 		}
-		
-
 
 		int alpha = 255;
 		if (untouchable) alpha = 128;
@@ -194,7 +197,7 @@ void CGimmick::SetState(int state)
 		break;
 
 	case MARIO_STATE_JUMP_HIGH_SPEED:
-		vy = -MARIO_JUMP_HIGHT_SPEED_Y/5;
+		vy = -MARIO_JUMP_HIGHT_SPEED_Y;
 		break;
 
 	}
@@ -203,12 +206,14 @@ void CGimmick::SetState(int state)
 void CGimmick::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x;
-	top = y;
-	if (jump==1)
-	{
+	top = y + GIMMICK_BBOX_HORN;
+
+	if (jump == 1){
+	
 		right = x + GIMMICK_BBOX_WIDTH;
 		bottom = y + GIMMICK_JUMP_BBOX_HEIGHT;
 	}
+
 	right = x + GIMMICK_BBOX_WIDTH;
 	bottom = y + GIMMICK_BBOX_HEIGHT;
 

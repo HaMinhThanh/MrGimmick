@@ -10,6 +10,7 @@
 
 // include enemies
 #include "Bomb.h"
+#include "Define.h"
 
 using namespace std;
 
@@ -342,10 +343,17 @@ void CPlayScene::Update(DWORD dt)
 	player->GetPosition(cx, cy);
 
 	CGame* game = CGame::GetInstance();
+
 	cx -= game->GetScreenWidth() / 2;
 	cy -= game->GetScreenHeight() / 2;
 
-	CGame::GetInstance()->SetCamPos((int)cx, 150);
+	if (cx < _xLeft) 
+		cx = _xLeft;
+
+	if (cx > _xRight - SCREEN_WIDTH + 16) // cong them 16 vi thieu 1 frame
+		cx = _xRight - SCREEN_WIDTH + 16;
+
+	CGame::GetInstance()->SetCamPos((int)cx, 200);
 }
 
 void CPlayScene::Render()
@@ -385,6 +393,7 @@ void CPlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		{
 			gimmick->SetState(GIMMICK_STATE_JUMP);
 			gimmick->SetJumping(1);
+
 			if (gimmick->GetDoubleJumpStart() == 0)
 			{
 				//gimmick->SetState(MARIO_STATE_JUMP_HIGH_SPEED);
@@ -442,8 +451,8 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		if (gimmick->GetHoldStar() == 0)
 			gimmick->SetHoldStar(1);
 	}
-	else if (gimmick->vy == 0) {
+	else if (gimmick->vy == 0 && gimmick->vx != 0) {
 
 		gimmick->SetState(GIMMICK_STATE_IDLE);
-	}		
+	}
 }

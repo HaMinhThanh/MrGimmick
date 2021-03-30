@@ -7,7 +7,11 @@
 #define BOMB_STATE_FLY				300
 #define BOMB_STATE_DIE				900
 
-#define BOMB_GRAVITY		0.002f
+#define BOMB_GRAVITY				0.002f
+
+#define BOMB_SPEED_X			0.01f
+#define BOMB_SPEED_Y_NORMAL		0.01f
+#define BOMB_SPEED_Y_COLLISION	0.03f
 
 #define BOMB_BBOX_WIDTH		16
 #define BOMB_BBOX_HEIGHT	16

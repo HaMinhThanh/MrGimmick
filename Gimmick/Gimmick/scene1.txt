@@ -292,6 +292,9 @@
 # Gimmick
 1	0	0	1
 
+# Bomb
+5	100	300	3
+
 [MAP_TEXTURES]
 #idScene	rowSprites	columnSprites	IDTileSet
 1	12	9	11	
