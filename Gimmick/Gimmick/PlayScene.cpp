@@ -415,7 +415,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 
 		gimmick->SetState(GIMMICK_STATE_WALKING_LEFT);
 	}
-	else if (gimmick->vy == 0) {
+	else {
 
 		gimmick->SetState(GIMMICK_STATE_IDLE);
 	}
