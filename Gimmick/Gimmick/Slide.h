@@ -4,5 +4,6 @@
 
 class Slide : public CGameObject
 {
+public:
 };
 

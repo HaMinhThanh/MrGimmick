@@ -402,14 +402,22 @@ void CPlayScenceKeyHandler::OnKeyUp(int KeyCode)
 void CPlayScenceKeyHandler::KeyState(BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
+
 	CGimmick* gimmick = ((CPlayScene*)scence)->GetPlayer();
 
 	// disable control key when Mario die 
 
-	if (game->IsKeyDown(DIK_RIGHT))
+	if (game->IsKeyDown(DIK_RIGHT)) {
+
 		gimmick->SetState(GIMMICK_STATE_WALKING_RIGHT);
-	else if (game->IsKeyDown(DIK_LEFT))
+	}
+	else if (game->IsKeyDown(DIK_LEFT)) {
+
 		gimmick->SetState(GIMMICK_STATE_WALKING_LEFT);
-	else
+	}
+	else if (gimmick->vy == 0) {
+
 		gimmick->SetState(GIMMICK_STATE_IDLE);
+	}
+		
 }
