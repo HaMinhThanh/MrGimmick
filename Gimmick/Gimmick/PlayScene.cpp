@@ -414,6 +414,11 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	else if (game->IsKeyDown(DIK_LEFT)) {
 
 		gimmick->SetState(GIMMICK_STATE_WALKING_LEFT);
+	else if (game->IsKeyDown(DIK_A))
+	{
+		if (gimmick->GetHoldStar() == 0)
+			gimmick->SetHoldStar(1);
+	}
 	}
 
 
