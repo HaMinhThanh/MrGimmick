@@ -3,14 +3,21 @@
 
 #include "PlayScene.h"
 #include "Utils.h"
+#include "Define.h"
+
 #include "Textures.h"
 #include "Sprites.h"
-#include "Portal.h"
-#include"Star.h"
+#include "Animations.h"
 
-// include enemies
+#include "Portal.h"
+#include "Star.h"
+
+#include "Brick.h"
+#include "ScrollBar.h"
+#include "Slide.h"
+
 #include "Bomb.h"
-#include "Define.h"
+
 
 using namespace std;
 
@@ -37,8 +44,17 @@ CPlayScene::CPlayScene(int id, LPCWSTR filePath) :
 
 #define OBJECT_TYPE_GIMMICK	1
 #define	OBJECT_TYPE_STAR 2
+
+// Ground
 #define OBJECT_TYPE_BRICK	4
-#define OBJECT_TYPE_BOMB	5
+#define OBJECT_TYPE_SLIDE	5
+#define OBJECT_TYPE_SCROLLBAR	6
+
+// Enemy
+#define OBJECT_TYPE_BOMB	21
+
+// Item
+// Effect
 
 
 
@@ -176,6 +192,19 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	case OBJECT_TYPE_STAR:
 		obj = new CStar();
+		break;
+
+	case OBJECT_TYPE_SLIDE:
+	{
+		float x2 = atof(tokens[4].c_str());
+		float y2 = atof(tokens[5].c_str());
+		int state = atoi(tokens[6].c_str());
+
+		obj = new CSlide(x, y, x2, y2, state);
+		break;
+	}
+
+	case OBJECT_TYPE_SCROLLBAR:
 		break;
 
 	case OBJECT_TYPE_BOMB:

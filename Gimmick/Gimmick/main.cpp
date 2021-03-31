@@ -9,7 +9,7 @@
 using namespace std;
 
 #define WINDOW_CLASS_NAME L"Game Window"
-#define MAIN_WINDOW_TITLE L"Mr Gimmick"
+#define MAIN_WINDOW_TITLE L"Mr Gimmick NES"
 #define WINDOW_ICON_PATH L"gimmick.ico"
 
 #define MARIO_TEXTURE_PATH L"gimmick.ico"

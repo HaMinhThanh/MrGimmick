@@ -8,6 +8,7 @@
 
 #include "Portal.h"
 #include "Bomb.h"
+#include "Slide.h"
 
 CGimmick* CGimmick::_instance = NULL;
 
@@ -32,7 +33,9 @@ CGimmick::CGimmick(float x, float y) : CGameObject()
 
 void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	vy += GIMMICK_GRAVITY * dt;
+	if (!isSlide)
+		vy += GIMMICK_GRAVITY * dt;
+
 	// Calculate dx, dy 
 	CGameObject::Update(dt);
 
@@ -114,6 +117,7 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		//
 		// Collision logic with other objects
 		//
+
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
@@ -123,13 +127,35 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (e->ny != 0 && e->nx == 0)
 					vy = 0;
 			}
+			else if (dynamic_cast<CSlide*>(e->obj)) {
+				/*vx = 0.01f;
+				vy = -0.01f;*/
+				CSlide* slide = dynamic_cast<CSlide*>(e->obj);
+
+				if ((slide->x1 - x) / (y - slide->y2) == slide->slidePos) {
+
+					vx = 0.01f;
+					vy = -0.01f;
+				}
+
+				isSlide = true;
+			}
+			else {
+				isSlide = false;
+			}
 		}
 
-		x += min_tx * dx + nx * 0.4f;
-		y += min_ty * dy + ny * 0.4f;
+		if (!isSlide) {
+			x += min_tx * dx + nx * 0.4f;
+			y += min_ty * dy + ny * 0.4f;
 
-		if (nx != 0) vx = 0;
-		if (ny != 0) vy = 0;
+			if (nx != 0) vx = 0;
+			if (ny != 0) vy = 0;
+		}
+		else {
+			x += dx;
+			y += dy;
+		}		
 	}
 
 	// clean up collision events

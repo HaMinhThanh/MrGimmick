@@ -293,7 +293,10 @@
 1	0	0	1
 
 # Bomb
-5	100	300	3
+21	100	300	3
+
+# Slide
+5	480	352	1	512	336	0
 
 [MAP_TEXTURES]
 #idScene	rowSprites	columnSprites	IDTileSet

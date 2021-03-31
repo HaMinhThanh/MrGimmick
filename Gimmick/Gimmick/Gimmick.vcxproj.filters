@@ -54,9 +54,6 @@
     <Filter Include="Objects\Enemy">
       <UniqueIdentifier>{1bdbf363-0577-4ac9-b1df-58d8295f7835}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Objects\Brick">
-      <UniqueIdentifier>{0b127285-c144-4ec4-ac26-c621a4208cd3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Objects\Effect">
       <UniqueIdentifier>{3652f094-3dbc-4899-b03f-cff5acc12cc4}</UniqueIdentifier>
     </Filter>
@@ -69,6 +66,9 @@
     <Filter Include="Objects\Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Objects\Ground">
+      <UniqueIdentifier>{0b127285-c144-4ec4-ac26-c621a4208cd3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -127,13 +127,19 @@
       <Filter>Objects\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Brick.h">
-      <Filter>Objects\Brick</Filter>
+      <Filter>Objects\Ground</Filter>
     </ClInclude>
     <ClInclude Include="Bomb.h">
       <Filter>Objects\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Star.h">
       <Filter>Objects\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Slide.h">
+      <Filter>Objects\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollBar.h">
+      <Filter>Objects\Ground</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -174,7 +180,7 @@
       <Filter>Framework\Textures</Filter>
     </ClCompile>
     <ClCompile Include="Brick.cpp">
-      <Filter>Objects\Brick</Filter>
+      <Filter>Objects\Ground</Filter>
     </ClCompile>
     <ClCompile Include="Effect.cpp">
       <Filter>Objects\Effect</Filter>
@@ -199,6 +205,12 @@
     </ClCompile>
     <ClCompile Include="Star.cpp">
       <Filter>Objects\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollBar.cpp">
+      <Filter>Objects\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Slide.cpp">
+      <Filter>Objects\Ground</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

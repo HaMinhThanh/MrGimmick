@@ -36,6 +36,8 @@
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Portal.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="ScrollBar.h" />
+    <ClInclude Include="Slide.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Star.h" />
     <ClInclude Include="Textures.h" />
@@ -59,6 +61,8 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Portal.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="ScrollBar.cpp" />
+    <ClCompile Include="Slide.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Star.cpp" />
     <ClCompile Include="Textures.cpp" />

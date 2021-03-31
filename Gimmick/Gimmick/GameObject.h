@@ -86,6 +86,8 @@ public:
 		float& rdx,
 		float& rdy);
 
+	bool isCollision(RECT r1, RECT r2);
+
 	CGameObject();
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) = 0;

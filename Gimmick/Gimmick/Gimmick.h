@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 #define GIMMICK_WALKING_SPEED		0.06f 
@@ -45,11 +45,15 @@ class CGimmick : public CGameObject
 
 	float start_x;			// initial position of Mario at scene
 	float start_y;
+
 	int jump = 0;
 	int maxjumping = 0;
 	bool isMaxJumping = false;
+
 	int shootFire = 0;
 	int holdStar = 0;
+
+	bool isSlide = false;
 	
 public:
 	static CGimmick* GetInstance(float x, float y);
@@ -64,16 +68,35 @@ public:
 	void Reset();
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+
 	int Jumping() { return jump; };
 	void SetJumping(int jump) { this->jump = jump; };
 	int GetJumping() { return jump; };
 	DWORD time_maxjumping = 0;
+
+	// redistribute the update function
+	void CollisionWithItem(vector<LPGAMEOBJECT>& listObj); // các item như knife,heart, whipupgrade
+
+	void CollisionWithBrick(DWORD dt, LPGAMEOBJECT brick, float min_tx0, float min_ty0, int nx0, int ny0,
+		float rdx0, float rdy0);
+
+	void CollisionWithHidenObject(DWORD dt, vector<LPGAMEOBJECT>& listHidenObj);// dùng cho kết thúc thang
+
+	void CollisionWithPlatform(DWORD dt, LPGAMEOBJECT listPlf, float min_tx0, float min_ty0, int nx0, int ny0,
+		float rdx0, float rdy0);
+
+	void CollisionWithEnemy(DWORD dt, vector<LPGAMEOBJECT>& listObj);
+
+	void CollisionWithPortal(DWORD dt, vector<LPGAMEOBJECT>& listObj);
+
+	void CollisionWithObjectHaveItem(DWORD dt, vector<LPGAMEOBJECT>& listObj);
 
 	// Check for double jump
 	DWORD doubleJump_start = 0;
 	void StartJumpingMax() { maxjumping = 1, time_maxjumping = GetTickCount(); }
 	void ResetDoubleJumpStart() { doubleJump_start = 0; }
 	void SetDoubleJumpStart() { doubleJump_start = GetTickCount(); }
+
 	DWORD GetDoubleJumpStart() { return doubleJump_start; }
 	int GetShoot() { return shootFire; };
 	void SetShoot(int shoot) { shootFire=shoot; };
