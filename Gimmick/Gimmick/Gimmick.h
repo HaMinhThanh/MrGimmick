@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "Star.h"
+#include "LoadingStar.h"
 
 #define GIMMICK_WALKING_SPEED		0.06f 
 //0.1f
@@ -67,6 +68,7 @@ public:
 	static CGimmick* GetInstance(float x, float y);
 
 	CStar* star = NULL;
+	LoadingStar* load_star = NULL;
 
 	CGimmick(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
@@ -109,6 +111,8 @@ public:
 	bool isCanShot = false;
 	void ShotStar();
 	void isPrepareShot();
+
+	void SetLoadingStar();
 
 };
 

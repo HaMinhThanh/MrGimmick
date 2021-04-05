@@ -11,7 +11,7 @@ CStar::CStar()
 	//SetState(STAR_STATE_ACTIVITY);
 
 	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(2);
+	LPANIMATION_SET ani_set = animation_sets->Get(STAR_ANIMATION_SET);
 
 	this->SetAnimationSet(ani_set);
 
@@ -26,7 +26,7 @@ CStar::CStar()
 
 void CStar::Render()
 {
-	if (isActive == false) return;
+	//if (isActive == false) return;
 
 	animation_set->at(0)->Render(x, y);
 
@@ -85,71 +85,73 @@ void CStar::GetBoundingBox(float& l, float& t, float& r, float& b)
 void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {	
 
-	CGameObject::Update(dt, coObjects);
+	if (isActive) {
 
-	vy += STAR_GRAVITY * dt;
+		CGameObject::Update(dt, coObjects);
 
-	if (acting == 1) {
+		vy += STAR_GRAVITY * dt;
 
-		if (GetTickCount() - time_acting > STAR_UNTOUCHABLE_TIME)
+		if (acting == 1) {
+
+			if (GetTickCount() - time_acting > STAR_ACTING_TIME)
+			{
+				time_acting = 0;
+				acting = 0;
+
+				isFinish = true;
+				SetState(STAR_STATE_HIDDEN);
+			}
+		}
+
+		vector<LPGAMEOBJECT> Bricks;
+		Bricks.clear();
+
+		for (UINT i = 0; i < coObjects->size(); i++)
+			if (dynamic_cast<CBrick*>(coObjects->at(i)))
+				Bricks.push_back(coObjects->at(i));
+
+		vector<LPCOLLISIONEVENT>  coEvents;
+		vector<LPCOLLISIONEVENT>  coEventsResult;
+
+		coEvents.clear();
+
+		CalcPotentialCollisions(&Bricks, coEvents);
+
+		if (coEvents.size() == 0)
 		{
-			time_acting = 0;
-			acting = 0;
-
-			isFinish = true;
-			SetState(STAR_STATE_HIDDEN);
+			x += dx;
+			y += dy;
 		}
-	}
+		else
+		{
+			float min_tx, min_ty, nx = 0, ny;
+			float rdx, rdy;
 
-	vector<LPGAMEOBJECT> Bricks;
-	Bricks.clear();
+			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
 
-	for (UINT i = 0; i < coObjects->size(); i++)
-		if (dynamic_cast<CBrick*>(coObjects->at(i)))
-			Bricks.push_back(coObjects->at(i));
+			x += min_tx * dx + nx * 0.08f;
+			y += min_ty * dy + ny * 0.08f;
 
-	vector<LPCOLLISIONEVENT>  coEvents;
-	vector<LPCOLLISIONEVENT>  coEventsResult;
+			if (nx != 0 && ny == 0) vx *= STAR_SPEED_AFTER_COLLISION;
+			if (ny != 0) {
 
-	coEvents.clear();
+				vy *= STAR_SPEED_AFTER_COLLISION;
 
-	CalcPotentialCollisions(&Bricks, coEvents);
+				/*if (vy < 0) {
 
-	if (coEvents.size() == 0)
-	{
-		x += dx;
-		y += dy;
-	}
-	else
-	{
-		float min_tx, min_ty, nx = 0, ny;
-		float rdx, rdy;
-
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-
-		x += min_tx * dx + nx * 0.04f;
-		y += min_ty * dy + ny * 0.04f;
-
-		if (nx != 0) vx *= -1;
-		if (ny != 0) {
-
-			vy *= -1;
-
-			if (ny < 0) {
-
-				vy += 0.0005f;
+					vy = vy * -0.8f;
+				}
+				else {
+					vy = vy * -0.8f;
+				}*/
 			}
-			else {
-				vy -= 0.0005f;
-			}
-		}
-			
+
 			//vy *= -1;
 
 		//if (vy < -FIREBALL_SPEED_MAX_Y) vy = -FIREBALL_SPEED_MAX_Y;
 
+		}
+		for (UINT i = 0; i < coEvents.size(); i++)
+			delete coEvents[i];
 	}
-	for (UINT i = 0; i < coEvents.size(); i++)
-		delete coEvents[i];
-	//}
 }

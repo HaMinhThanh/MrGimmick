@@ -79,12 +79,20 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			loading = 2;
 			time_load = 0;
 
-			isCanShot = true;
+			isCanShot = true;			
 		}
+	}
+
+	if (isCanShot) {
+
+		star->SetPosition(x, y - STAR_BBOX_HEIGHT + 4);
 	}
 
 	if (star != NULL)
 		star->Update(dt, coObjects);
+
+	if (loading == 1 )
+		load_star->Update(dt, coObjects);
 
 
 	// Calculate dx, dy 
@@ -243,6 +251,9 @@ void CGimmick::Render()
 
 		if (star != NULL)
 			star->Render();
+		
+		if (loading == 1)
+			load_star->Render();
 
 		RenderBoundingBox();
 }
@@ -331,9 +342,7 @@ void CGimmick::ShotStar()
 		
 		isCanShot = false;
 		star->isActive = true;
-		loading = 0;
-
-		star->SetPosition(x, y - STAR_BBOX_HEIGHT - 1);
+		loading = 0;		
 
 		if (nx > 0) {
 			
@@ -352,6 +361,14 @@ void CGimmick::isPrepareShot()
 
 		StarLoading();
 	}
+}
+
+void CGimmick::SetLoadingStar()
+{
+	if (load_star == NULL)
+		load_star = new LoadingStar(x + 8, y - 8);
+
+	load_star->TurnToBegin(x + 8, y - 8);
 }
 
 /*

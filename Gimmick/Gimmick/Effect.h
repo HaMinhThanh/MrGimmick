@@ -1,5 +1,8 @@
 #pragma once
-class Effect
+
+#include "GameObject.h"
+
+class Effect: public CGameObject
 {
 };
 

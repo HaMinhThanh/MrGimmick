@@ -141,6 +141,12 @@
     <ClInclude Include="ScrollBar.h">
       <Filter>Objects\Ground</Filter>
     </ClInclude>
+    <ClInclude Include="LoadingStar.h">
+      <Filter>Objects\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Die.h">
+      <Filter>Objects\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animations.cpp">
@@ -211,6 +217,12 @@
     </ClCompile>
     <ClCompile Include="Slide.cpp">
       <Filter>Objects\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="Die.cpp">
+      <Filter>Objects\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingStar.cpp">
+      <Filter>Objects\Effect</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

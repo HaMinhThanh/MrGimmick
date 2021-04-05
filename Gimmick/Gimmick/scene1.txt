@@ -76,6 +76,10 @@
 #bubble start
 20005	340	142	356	157	0
 
+# Star of Gimmick
+20006	284	141	300	157	0
+20007	302	141	318	157	0
+
 #=======black eneny
 
 #==normal
@@ -158,6 +162,10 @@
 
 #star
 200	20002	100	20003	100	20004	100	20002	100	20003	100	20004	100	20002	100	20003	100	20004	100	20002	100	20003	100	20004	100
+# Star is made again
+201	20006	100	20007	100
+# Small star
+202	20000	100	20001	100
 
 
 [ANIMATION_SETS]
@@ -180,7 +188,9 @@
 408	408
 
 #star
-2	200
+2	201
+# small star
+21	202
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type

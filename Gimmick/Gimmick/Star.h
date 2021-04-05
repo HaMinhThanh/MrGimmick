@@ -1,10 +1,10 @@
 #pragma once
 #include "GameObject.h"
 
-#define STAR_STATE_ACTIVITY 100
-#define STAR_STATE_INACTIVITY 200
-#define STAR_STATE_HOLDING 300
-#define STAR_FLY_SPEED 0.05f;
+#define STAR_STATE_ACTIVITY		100
+#define STAR_STATE_INACTIVITY	200
+#define STAR_STATE_HOLDING		300
+#define STAR_FLY_SPEED			0.05f
 
 #define STAR_ANI_FLY 0
 
@@ -12,20 +12,23 @@
 #define STAR_BBOX_HEIGHT 16
 
 //
-#define STAR_BBOX_WIDTH		4
-#define STAR_BBOX_HEIGHT	5	
+#define STAR_BBOX_WIDTH		16
+#define STAR_BBOX_HEIGHT	16	
 
 #define STAR_GOING_RIGHT	1
 #define STAR_GOING_LEFT		2	
 #define STAR_STATE_HIDDEN   3	
 
-#define STAR_GRAVITY	0.0005f
-#define STAR_SPEED_X	0.1f
+#define STAR_GRAVITY	0.001f
+#define STAR_SPEED_X	0.12f
 #define STAR_SPEED_Y	0.0001f	
+#define STAR_SPEED_AFTER_COLLISION	-0.7
 
 #define STAR_SPEED_MAX_Y	0.0001f
 
-#define STAR_UNTOUCHABLE_TIME	3000
+#define STAR_ACTING_TIME	5000
+
+#define STAR_ANIMATION_SET		2
 
 class CStar : public CGameObject
 {

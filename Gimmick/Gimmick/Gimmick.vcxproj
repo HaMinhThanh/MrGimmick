@@ -24,6 +24,7 @@
     <ClInclude Include="Brick.h" />
     <ClInclude Include="Code.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="Die.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Event.h" />
@@ -32,6 +33,7 @@
     <ClInclude Include="Gimmick.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KeyEventHandler.h" />
+    <ClInclude Include="LoadingStar.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Portal.h" />
@@ -48,6 +50,7 @@
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Code.cpp" />
+    <ClCompile Include="Die.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Event.cpp" />
@@ -56,6 +59,7 @@
     <ClCompile Include="Gimmick.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="KeyEventHandler.cpp" />
+    <ClCompile Include="LoadingStar.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="PlayScene.cpp" />
