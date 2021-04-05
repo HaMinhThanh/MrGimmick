@@ -28,7 +28,8 @@ void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGimmick* gimmick = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 	CGameObject::Update(dt, coObjects);
-	if (GetTickCount() - Firinng_start > 1300 && Fly == 1 && gimmick->GetHoldStar() ==0)
+	vy += GIMMICK_GRAVITY * dt;
+	if (GetTickCount() - Firinng_start > 1000 && Fly == 1 && gimmick->GetHoldStar() ==0)
 	{
 		vx = 0;
 		Fly = 0;
@@ -47,8 +48,8 @@ void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		SetY(gimmick->y);
 		FiringStart();
 		gimmick->SetShoot(0);
-		vy = 1.2f;
-		vx = 0.3f;
+		vy = 0.7f;
+		vx = 0.1f;
 
 	}
 
@@ -93,6 +94,7 @@ void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 			if (ny != 0)
 			{
+				//vy = -vy;
 				vy = -vy;
 				/*if (ny > 0)
 				{
