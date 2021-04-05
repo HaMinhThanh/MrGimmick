@@ -91,8 +91,11 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (star != NULL)
 		star->Update(dt, coObjects);
 
-	if (loading == 1 )
+	if (loading == 1) {
+
+		load_star->TurnToBegin(x- LOADING_STAR_ALIGN, y - LOADING_STAR_ALIGN);
 		load_star->Update(dt, coObjects);
+	}
 
 
 	// Calculate dx, dy 
@@ -336,46 +339,5 @@ void CGimmick::isCanSlide(vector<LPGAMEOBJECT>& listObj)
 	}
 }
 
-void CGimmick::ShotStar()
-{
-	if (isCanShot) {
-		
-		isCanShot = false;
-		star->isActive = true;
-		loading = 0;		
 
-		if (nx > 0) {
-			
-			star->SetState(STAR_GOING_RIGHT);
-		}
-		else {
-
-			star->SetState(STAR_GOING_LEFT);
-		}
-	}
-}
-
-void CGimmick::isPrepareShot()
-{
-	if (loading == 0) {
-
-		StarLoading();
-	}
-}
-
-void CGimmick::SetLoadingStar()
-{
-	if (load_star == NULL)
-		load_star = new LoadingStar(x + 8, y - 8);
-
-	load_star->TurnToBegin(x + 8, y - 8);
-}
-
-/*
-	Reset Mario status to the beginning state of a scene
-*/
-void CGimmick::Reset()
-{
-	
-}
 

@@ -485,10 +485,10 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 		/*if (gimmick->GetHoldStar() == 0)
 			gimmick->SetHoldStar(1);*/
 
-		if (gimmick->loading == 0 && gimmick->star->isActive == false) {
+		if (gimmick->loading == 1 ) {
 
 			gimmick->SetLoadingStar();
-			gimmick->StarLoading();
+			// /
 		}
 
 	}
@@ -496,7 +496,7 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 
 		if (gimmick->loading == 2 && gimmick->isCanShot) {
 
-			gimmick->ShotStar();
+			// //
 		}
 		else {
 

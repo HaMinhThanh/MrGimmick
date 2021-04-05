@@ -39,6 +39,7 @@
 
 // declare time
 #define GIMMICK_TIME_LOADING_STAR	1000
+#define LOADING_STAR_ALIGN		8
 
 #define GIMMICK_JUMP_BBOX_HEIGHT 24
 
@@ -108,11 +109,11 @@ public:
 	void StarLoading() { time_load = GetTickCount(); loading = 1; }
 	void ReSetLoading() { time_load = 0; loading = 0; }
 
-	bool isCanShot = false;
+	/*bool isCanShot = false;
 	void ShotStar();
 	void isPrepareShot();
 
-	void SetLoadingStar();
+	void SetLoadingStar();*/
 
 };
 
