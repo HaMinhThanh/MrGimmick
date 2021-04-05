@@ -3,111 +3,153 @@
 #include"PlayScene.h"
 #include"Game.h"
 
+#define STAR_ANIMATION_SET		2
+
 
 CStar::CStar()
 {
-	SetState(STAR_STATE_ACTIVITY);
+	//SetState(STAR_STATE_ACTIVITY);
+
+	CAnimationSets* animation_sets = CAnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(2);
+
+	this->SetAnimationSet(ani_set);
+
+	isFinish = false;
+	isActive = false;
+
+	x = y = 0;
+
+	vy = 0;
+	vx = 0;
 }
 
 void CStar::Render()
 {
-	if (Fly == 1)
-		animation_set->at(0)->Render(x, y);
+	if (isActive == false) return;
+
+	animation_set->at(0)->Render(x, y);
+
 	//RenderBoundingBox();
+}
+
+void CStar::SetState(int state)
+{
+	CGameObject::SetState(state);
+
+	switch (state)
+	{
+	case STAR_GOING_RIGHT:
+
+		vx = STAR_SPEED_X;
+		vy = -STAR_SPEED_Y;
+
+		if (acting == 0)
+			StartActive();
+
+		break;
+
+	case STAR_GOING_LEFT:
+
+		vx = -STAR_SPEED_X;
+		vy = -STAR_SPEED_Y;
+
+		if (acting == 0)
+			StartActive();
+
+		break;
+
+	case STAR_STATE_HIDDEN:
+
+		vx = vy = 0;
+		isActive = false;
+
+		break;
+	}
 }
 
 void CStar::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
+	if (isActive == false) {
+
+		l = t = r = b = 0;
+		return;
+	}
+
 	l = x;
 	t = y;
 	r = x + STAR_BBOX_WIDTH;
-	b = y+STAR_BBOX_HEIGHT;
+	b = y + STAR_BBOX_HEIGHT;
 }
 
 void CStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
-{
-	CGimmick* gimmick = ((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
+{	
+
 	CGameObject::Update(dt, coObjects);
-	if (GetTickCount() - Firinng_start > 1300 && Fly == 1 && gimmick->GetHoldStar() ==0)
-	{
-		vx = 0;
-		Fly = 0;
-	}
 
-	if (gimmick->GetHoldStar() == 1)
-	{
-		x = gimmick->x;
-		y = gimmick->y-15;
-	}
-	
-	else if (gimmick->GetShoot() == 1 && GetFly() == 0 && gimmick->GetHoldStar() != 1)
-	{
-		SetPosition(gimmick->x, gimmick->y);
-		SetFly(1);
-		SetY(gimmick->y);
-		FiringStart();
-		gimmick->SetShoot(0);
-		vy = 1.2f;
-		vx = 0.3f;
+	vy += STAR_GRAVITY * dt;
 
-	}
+	if (acting == 1) {
 
-	if (Fly == 1 && gimmick->GetHoldStar() != 1)
-	{
-		vector<LPCOLLISIONEVENT> coEvents;
-		vector<LPCOLLISIONEVENT> coEventsResult;
-		coEvents.clear();
-		CalcPotentialCollisions(coObjects, coEvents);
-		if (coEvents.size() == 0)
+		if (GetTickCount() - time_acting > STAR_UNTOUCHABLE_TIME)
 		{
-			if (gimmick->nx > 0)
-			{ 
-				x += dx;
-				y += dy;
-				//dau tien vy >0, dap xuong dat roi thi am
-				if (y < this->Y && vy < 0)
-				{
-					vy = -vy;
-				}
-			}
-			else
-			{
-				x -= dx;
-				y += dy;
-				if (y < this->Y && vy < 0)
-				{
-					vy = -vy;
-				}
-			}
+			time_acting = 0;
+			acting = 0;
 
-
+			isFinish = true;
+			SetState(STAR_STATE_HIDDEN);
 		}
-		else
-		{
-			float min_tx, min_ty, nx = 0, ny;
-			float rdx = 0;
-			float rdy = 0;
-
-			// TODO: This is a very ugly designed function!!!!
-			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
-
-			if (ny != 0)
-			{
-				vy = -vy;
-				/*if (ny > 0)
-				{
-					Y = y;
-				}*/
-			}
-			else if (nx != 0)
-			{
-				vx = -vx;
-				
-			}
-
-			y += min_ty * dy + ny * 0.4f;
-			x += min_tx * dx + nx * 0.4f;
-		}
-		
 	}
+
+	vector<LPGAMEOBJECT> Bricks;
+	Bricks.clear();
+
+	for (UINT i = 0; i < coObjects->size(); i++)
+		if (dynamic_cast<CBrick*>(coObjects->at(i)))
+			Bricks.push_back(coObjects->at(i));
+
+	vector<LPCOLLISIONEVENT>  coEvents;
+	vector<LPCOLLISIONEVENT>  coEventsResult;
+
+	coEvents.clear();
+
+	CalcPotentialCollisions(&Bricks, coEvents);
+
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+		float rdx, rdy;
+
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny, rdx, rdy);
+
+		x += min_tx * dx + nx * 0.04f;
+		y += min_ty * dy + ny * 0.04f;
+
+		if (nx != 0) vx *= -1;
+		if (ny != 0) {
+
+			vy *= -1;
+
+			if (ny < 0) {
+
+				vy += 0.0005f;
+			}
+			else {
+				vy -= 0.0005f;
+			}
+		}
+			
+			//vy *= -1;
+
+		//if (vy < -FIREBALL_SPEED_MAX_Y) vy = -FIREBALL_SPEED_MAX_Y;
+
+	}
+	for (UINT i = 0; i < coEvents.size(); i++)
+		delete coEvents[i];
+	//}
 }

@@ -474,14 +474,30 @@ void CPlayScenceKeyHandler::KeyState(BYTE* states)
 	else if (game->IsKeyDown(DIK_LEFT)) {
 
 		gimmick->SetState(GIMMICK_STATE_WALKING_LEFT);
-	}
-	else if (game->IsKeyDown(DIK_A))
-	{
-		if (gimmick->GetHoldStar() == 0)
-			gimmick->SetHoldStar(1);
-	}
+	}	
 	else if (gimmick->vy == 0 && gimmick->vx != 0) {
 
 		gimmick->SetState(GIMMICK_STATE_IDLE);
+	}
+
+	if (game->IsKeyDown(DIK_A))
+	{
+		/*if (gimmick->GetHoldStar() == 0)
+			gimmick->SetHoldStar(1);*/
+
+		if (gimmick->loading == 0 && gimmick->star->isActive == false)
+			gimmick->StarLoading();
+
+	}
+	else {
+
+		if (gimmick->loading == 2 && gimmick->isCanShot) {
+
+			gimmick->ShotStar();
+		}
+		else {
+
+			gimmick->ReSetLoading();
+		}
 	}
 }

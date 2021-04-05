@@ -5,6 +5,9 @@
 #define SLIDE_SPEED_X
 #define SLIDE_GRAVITY
 
+#define SLIDE_TYPE_UP	1
+#define SLIDE_TYPE_DOWN	2
+
 class CSlide: public CGameObject
 {
 public:

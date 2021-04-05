@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "Star.h"
 
 #define GIMMICK_WALKING_SPEED		0.06f 
 //0.1f
@@ -19,6 +20,8 @@
 #define GIMMICK_STATE_JUMP			300
 #define GIMMICK_STATE_COLISION		400
 #define MARIO_STATE_JUMP_HIGH_SPEED	500
+#define GIMMICK_STATE_SLIDE_DOWN	600
+#define GIMMICK_STATE_SLIDE_UP		700
 
 #define GIMMICK_ANI_IDLE_RIGHT		0
 #define GIMMICK_ANI_IDLE_LEFT			1
@@ -32,6 +35,9 @@
 #define GIMMICK_BBOX_WIDTH  16
 #define GIMMICK_BBOX_HEIGHT 19
 #define GIMMICK_BBOX_HORN	4
+
+// declare time
+#define GIMMICK_TIME_LOADING_STAR	1000
 
 #define GIMMICK_JUMP_BBOX_HEIGHT 24
 
@@ -53,10 +59,14 @@ class CGimmick : public CGameObject
 	int shootFire = 0;
 	int holdStar = 0;
 
+	// slide
 	bool isSlide = false;
+	bool isColisionWithBrick = true;
 	
 public:
 	static CGimmick* GetInstance(float x, float y);
+
+	CStar* star = NULL;
 
 	CGimmick(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
@@ -74,23 +84,6 @@ public:
 	int GetJumping() { return jump; };
 	DWORD time_maxjumping = 0;
 
-	// redistribute the update function
-	void CollisionWithItem(vector<LPGAMEOBJECT>& listObj); // các item như knife,heart, whipupgrade
-
-	void CollisionWithBrick(DWORD dt, LPGAMEOBJECT brick, float min_tx0, float min_ty0, int nx0, int ny0,
-		float rdx0, float rdy0);
-
-	void CollisionWithHidenObject(DWORD dt, vector<LPGAMEOBJECT>& listHidenObj);// dùng cho kết thúc thang
-
-	void CollisionWithPlatform(DWORD dt, LPGAMEOBJECT listPlf, float min_tx0, float min_ty0, int nx0, int ny0,
-		float rdx0, float rdy0);
-
-	void CollisionWithEnemy(DWORD dt, vector<LPGAMEOBJECT>& listObj);
-
-	void CollisionWithPortal(DWORD dt, vector<LPGAMEOBJECT>& listObj);
-
-	void CollisionWithObjectHaveItem(DWORD dt, vector<LPGAMEOBJECT>& listObj);
-
 	// Check for double jump
 	DWORD doubleJump_start = 0;
 	void StartJumpingMax() { maxjumping = 1, time_maxjumping = GetTickCount(); }
@@ -102,5 +95,20 @@ public:
 	void SetShoot(int shoot) { shootFire=shoot; };
 	int GetHoldStar() { return holdStar; };
 	void SetHoldStar(int hold) { holdStar = hold; };
+
+	// set slide
+	void isCanSlide(vector<LPGAMEOBJECT>& listObj);
+
+	// new star
+	DWORD time_load;
+	int loading = 0;
+
+	void StarLoading() { time_load = GetTickCount(); loading = 1; }
+	void ReSetLoading() { time_load = 0; loading = 0; }
+
+	bool isCanShot = false;
+	void ShotStar();
+	void isPrepareShot();
+
 };
 

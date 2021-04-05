@@ -84,9 +84,7 @@ public:
 		float& nx,
 		float& ny,
 		float& rdx,
-		float& rdy);
-
-	bool isCollision(RECT r1, RECT r2);
+		float& rdy);	
 
 	CGameObject();
 
@@ -95,6 +93,11 @@ public:
 	virtual void Render() = 0;
 	virtual void SetState(int state) { this->state = state; }
 
+	float GetX() { return x; }
+	float GetY() { return y; }
+
+	float GetVx() { return vx; }
+	float GetVy() { return vy; }
 
 	~CGameObject();
 };

@@ -9,6 +9,7 @@
 #include "Portal.h"
 #include "Bomb.h"
 #include "Slide.h"
+#include "Brick.h"
 
 CGimmick* CGimmick::_instance = NULL;
 
@@ -25,6 +26,8 @@ CGimmick::CGimmick(float x, float y) : CGameObject()
 	untouchable = 0;
 	SetState(GIMMICK_STATE_IDLE);
 
+	star = new CStar();
+
 	start_x = x;
 	start_y = y;
 	this->x = x;
@@ -36,17 +39,7 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (!isSlide)
 		vy += GIMMICK_GRAVITY * dt;
 
-	// Calculate dx, dy 
-	CGameObject::Update(dt);
-
-	// Simple fall down
-	//vy += GIMMICK_GRAVITY * dt;	
-
-	vector<LPCOLLISIONEVENT> coEvents;
-	vector<LPCOLLISIONEVENT> coEventsResult;
-
-	coEvents.clear();
-	CalcPotentialCollisions(coObjects, coEvents);
+	
 
 
 	// reset untouchable timer if untouchable time has passed
@@ -79,6 +72,32 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		time_maxjumping = 0;
 	}
 
+	if (loading == 1) {
+
+		if (GetTickCount() - time_load >= GIMMICK_TIME_LOADING_STAR) {
+
+			loading = 2;
+			time_load = 0;
+
+			isCanShot = true;
+		}
+	}
+
+	if (star != NULL)
+		star->Update(dt, coObjects);
+
+
+	// Calculate dx, dy 
+	CGameObject::Update(dt);
+
+	// Simple fall down
+	//vy += GIMMICK_GRAVITY * dt;	
+
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+
+	coEvents.clear();
+	CalcPotentialCollisions(coObjects, coEvents);
 
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -114,38 +133,61 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 			//CanFall = 0;
 		}
+
+		if (nx != 0 && ny == 0)
+			SetState(GIMMICK_STATE_IDLE);
+
 		//
 		// Collision logic with other objects
-		//
+		//		
 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			if (dynamic_cast<CBomb*>(e->obj)) {
+			if (dynamic_cast<CBomb*>(e->obj) && isSlide == false) {
 
 				if (e->ny != 0 && e->nx == 0)
 					vy = 0;
+				
 			}
-			else if (dynamic_cast<CSlide*>(e->obj)) {
+			if (dynamic_cast<CSlide*>(e->obj)) {
 				/*vx = 0.01f;
 				vy = -0.01f;*/
 				CSlide* slide = dynamic_cast<CSlide*>(e->obj);
 
-				if ((slide->x1 - x) / (y - slide->y2) == slide->slidePos) {
+				float l1, t1, r1, b1;
+				float l2, t2, r2, b2;
 
-					vx = 0.01f;
-					vy = -0.01f;
+				this->GetBoundingBox(l1, t1, r1, b1);
+				slide->GetBoundingBox(l2, t2, r2, b2);
+
+				//if (this->isCollision(l1, t1, r1, b1, l2, t2, r2, b2)) {
+				
+				if (slide->state == 0) {
+					if (tan((slide->x1 - x) / (slide->y2 - y)) <= tan(slide->slidePos)) {
+
+						vx = -0.03f;
+						vy = 0.015f;
+					}
+
+					isSlide = true;
+					isColisionWithBrick = false;
 				}
-
-				isSlide = true;
+				/*}
+				else {
+					
+					isSlide = false;
+				}*/
+				
 			}
 			else {
 				isSlide = false;
 			}
 		}
 
-		if (!isSlide) {
+		if (!isSlide ) {
+
 			x += min_tx * dx + nx * 0.4f;
 			y += min_ty * dy + ny * 0.4f;
 
@@ -160,6 +202,8 @@ void CGimmick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+
+
 }
 
 void CGimmick::Render()
@@ -197,6 +241,9 @@ void CGimmick::Render()
 
 		animation_set->at(ani)->Render(x, y, alpha);
 
+		if (star != NULL)
+			star->Render();
+
 		RenderBoundingBox();
 }
 
@@ -217,6 +264,8 @@ void CGimmick::SetState(int state)
 	case GIMMICK_STATE_JUMP:
 		// TODO: need to check if Mario is *current* on a platform before allowing to jump again
 		vy = -GIMMICK_JUMP_SPEED_Y;
+		isSlide = false;
+
 		break;
 	case GIMMICK_STATE_IDLE:
 		vx = 0;
@@ -243,6 +292,66 @@ void CGimmick::GetBoundingBox(float& left, float& top, float& right, float& bott
 	right = x + GIMMICK_BBOX_WIDTH;
 	bottom = y + GIMMICK_BBOX_HEIGHT;
 
+}
+
+void CGimmick::isCanSlide(vector<LPGAMEOBJECT>& listObj)
+{
+	float l, t, r, b;
+	float l1, t1, r1, b1;
+
+	GetBoundingBox(l, t, r, b);
+
+	for (int i = 0; i < listObj.size(); i++) {
+
+		if (listObj.at(i)->GetState() == SLIDE_TYPE_UP
+			|| listObj.at(i)->GetState()== SLIDE_TYPE_DOWN) {
+
+			listObj.at(i)->GetBoundingBox(l1, t1, r1, b1);
+
+			if (CGame::GetInstance()->isCollision(l, t, r, b, l1, t1, r1, b1)) {
+
+				CSlide* slide = dynamic_cast<CSlide*>(listObj.at(i));
+
+				if (slide->GetState() == SLIDE_TYPE_UP) {
+
+
+				}
+				else if (slide->GetState() == SLIDE_TYPE_DOWN) {
+
+
+				}
+			}
+		}
+	}
+}
+
+void CGimmick::ShotStar()
+{
+	if (isCanShot) {
+		
+		isCanShot = false;
+		star->isActive = true;
+		loading = 0;
+
+		star->SetPosition(x, y - STAR_BBOX_HEIGHT - 1);
+
+		if (nx > 0) {
+			
+			star->SetState(STAR_GOING_RIGHT);
+		}
+		else {
+
+			star->SetState(STAR_GOING_LEFT);
+		}
+	}
+}
+
+void CGimmick::isPrepareShot()
+{
+	if (loading == 0) {
+
+		StarLoading();
+	}
 }
 
 /*
