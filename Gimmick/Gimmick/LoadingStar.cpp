@@ -1,6 +1,6 @@
 #include "LoadingStar.h"
 
-LoadingStar::LoadingStar(float x, float y)
+CLoadingStar::CLoadingStar(float x, float y)
 {
 	backupX = x;
 	backupY = y;
@@ -8,17 +8,19 @@ LoadingStar::LoadingStar(float x, float y)
 	TurnToBegin(x, y);
 }
 
-LoadingStar::~LoadingStar()
+CLoadingStar::~CLoadingStar()
 {
 }
 
-void LoadingStar::TurnToBegin(float x, float y)
+void CLoadingStar::TurnToBegin(float x, float y)
 {
+	// reset star position above the gimmick head
+
 	x1 = x - 32;
-	x2 = x ;
-	x3 = x + 32;
-	x4 = x + 25;
-	x5 = x - 25;
+	x2 = x + 8;
+	x3 = x + 40;
+	x4 = x + 40;
+	x5 = x - 24;
 
 	y1 = y - 10;
 	y2 = y - 32;
@@ -27,7 +29,7 @@ void LoadingStar::TurnToBegin(float x, float y)
 	y5 = y + 32;
 }
 
-void LoadingStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void CLoadingStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt);
 
@@ -48,7 +50,7 @@ void LoadingStar::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 }
 
-void LoadingStar::Render()
+void CLoadingStar::Render()
 {
 	CAnimationSets* ani = CAnimationSets::GetInstance();
 
@@ -60,6 +62,6 @@ void LoadingStar::Render()
 
 }
 
-void LoadingStar::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void CLoadingStar::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 }

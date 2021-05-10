@@ -339,5 +339,11 @@ void CGimmick::isCanSlide(vector<LPGAMEOBJECT>& listObj)
 	}
 }
 
+void CGimmick::SetLoadingStar()
+{
+	if (load_star == NULL)
+		load_star = new CLoadingStar(x + 8, y - 8);
 
+	load_star->TurnToBegin(x + 8, y - 8);
+}
 

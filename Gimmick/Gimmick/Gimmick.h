@@ -69,7 +69,7 @@ public:
 	static CGimmick* GetInstance(float x, float y);
 
 	CStar* star = NULL;
-	LoadingStar* load_star = NULL;
+	CLoadingStar* load_star = NULL;
 
 	CGimmick(float x = 0.0f, float y = 0.0f);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
@@ -109,11 +109,11 @@ public:
 	void StarLoading() { time_load = GetTickCount(); loading = 1; }
 	void ReSetLoading() { time_load = 0; loading = 0; }
 
-	/*bool isCanShot = false;
+	bool isCanShot = false;
 	void ShotStar();
 	void isPrepareShot();
 
-	void SetLoadingStar();*/
+	void SetLoadingStar();
 
 };
 
